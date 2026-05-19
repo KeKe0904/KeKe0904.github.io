@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>NONWASTE-敬请期待</title>
+  <style>
+    /* 全局重置与优化 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Helvetica Neue', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      background-color: #fafbf8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+      /* 移动端优化字体渲染 */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ========== 响应式格子背景优化 ========== */
+    .grid-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      /* 主网格：默认48px，平板及以下缩小到36px，手机更小 */
+      background-image: 
+        linear-gradient(to right, rgba(180, 190, 170, 0.15) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(180, 190, 170, 0.15) 1px, transparent 1px);
+      background-size: 48px 48px;
+      transition: background-size 0.2s ease;
+    }
+
+    .grid-bg::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(to right, rgba(190, 200, 180, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(190, 200, 180, 0.08) 1px, transparent 1px);
+      background-size: 16px 16px;
+      pointer-events: none;
+      transition: background-size 0.2s ease;
+    }
+
+    /* 平板及中等屏幕 (小于768px) 调整网格密度 */
+    @media (max-width: 768px) {
+      .grid-bg {
+        background-size: 36px 36px;
+      }
+      .grid-bg::after {
+        background-size: 12px 12px;
+      }
+    }
+
+    /* 手机横屏或小屏幕 (小于480px) 进一步调整网格，保持视觉清爽 */
+    @media (max-width: 480px) {
+      .grid-bg {
+        background-size: 28px 28px;
+      }
+      .grid-bg::after {
+        background-size: 10px 10px;
+      }
+    }
+
+    /* 极小屏幕 (小于360px) 微调 */
+    @media (max-width: 360px) {
+      .grid-bg {
+        background-size: 24px 24px;
+      }
+      .grid-bg::after {
+        background-size: 8px 8px;
+      }
+    }
+
+    /* ========== 主卡片容器 ========== */
+    .container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 720px;
+      margin: 0 24px;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+      border-radius: 2px;
+      padding: 48px 32px 56px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.02), 0 1px 0 rgba(0, 0, 0, 0.02);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      border: 1px solid rgba(160, 170, 140, 0.15);
+      transition: padding 0.25s ease, margin 0.25s ease;
+    }
+
+    /* ========== 左上角Logo （响应式调整） ========== */
+    .logo-corner {
+      position: fixed;
+      top: 32px;
+      left: 36px;
+      z-index: 10;
+      font-size: 1.7rem;
+      font-weight: 550;
+      letter-spacing: 2px;
+      color: #3d4a38;
+      font-family: 'Inter', 'Helvetica Neue', 'Segoe UI', sans-serif;
+      text-transform: uppercase;
+      opacity: 0.85;
+      text-shadow: 0 1px 2px rgba(255,255,255,0.6);
+      line-height: 1;
+      background: transparent;
+      animation: fadeInDown 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+      transition: font-size 0.2s, top 0.2s, left 0.2s;
+    }
+
+    /* 响应式Logo尺寸与位置 */
+    @media (max-width: 768px) {
+      .logo-corner {
+        top: 28px;
+        left: 28px;
+        font-size: 1.5rem;
+        letter-spacing: 1.8px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo-corner {
+        top: 20px;
+        left: 20px;
+        font-size: 1.3rem;
+        letter-spacing: 1.6px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .logo-corner {
+        top: 16px;
+        left: 16px;
+        font-size: 1.2rem;
+      }
+    }
+
+    /* ========== 主标题“敬请期待”响应式字体 ========== */
+    .main-title {
+      font-size: clamp(3.2rem, 10vw, 5.2rem);
+      font-weight: 340;
+      letter-spacing: 0.02em;
+      color: #2b3428;
+      margin-bottom: 18px;
+      line-height: 1.15;
+      font-family: 'Inter', 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      text-shadow: 0 1px 1px rgba(255,255,255,0.8);
+      opacity: 0;
+      animation: fadeInUp 0.9s cubic-bezier(0.23, 1, 0.32, 1) 0.15s forwards;
+      transition: font-size 0.2s ease;
+    }
+
+    /* 针对平板优化标题大小 */
+    @media (max-width: 768px) {
+      .main-title {
+        font-size: clamp(2.8rem, 12vw, 4.8rem);
+        margin-bottom: 14px;
+      }
+    }
+
+    /* 手机端适当缩小但保持视觉冲击 */
+    @media (max-width: 480px) {
+      .main-title {
+        font-size: clamp(2.4rem, 13vw, 3.8rem);
+        margin-bottom: 12px;
+        letter-spacing: 0.01em;
+      }
+    }
+
+    /* ========== 英文辅助文字 ========== */
+    .sub-pending {
+      font-size: 1rem;
+      font-weight: 350;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #6b7263;
+      margin-bottom: 36px;
+      border-bottom: 1px solid rgba(140, 150, 130, 0.25);
+      padding-bottom: 12px;
+      display: inline-block;
+      opacity: 0;
+      animation: fadeIn 0.8s ease-out 0.3s forwards;
+      transition: font-size 0.2s, letter-spacing 0.2s;
+    }
+
+    @media (max-width: 480px) {
+      .sub-pending {
+        font-size: 0.85rem;
+        letter-spacing: 0.25em;
+        margin-bottom: 28px;
+        padding-bottom: 10px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .sub-pending {
+        font-size: 0.75rem;
+        letter-spacing: 0.2em;
+      }
+    }
+
+    /* ========== 描述文字响应式 ========== */
+    .description {
+      font-size: 1.25rem;
+      font-weight: 320;
+      color: #4e5b44;
+      margin-top: 12px;
+      margin-bottom: 42px;
+      line-height: 1.6;
+      max-width: 360px;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      animation: fadeInUp 0.9s cubic-bezier(0.23, 1, 0.32, 1) 0.4s forwards;
+      transition: font-size 0.2s, max-width 0.2s;
+    }
+
+    @media (max-width: 768px) {
+      .description {
+        font-size: 1.15rem;
+        max-width: 320px;
+        margin-bottom: 36px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .description {
+        font-size: 1rem;
+        max-width: 280px;
+        margin-bottom: 32px;
+        line-height: 1.5;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .description {
+        font-size: 0.9rem;
+        max-width: 250px;
+        margin-bottom: 28px;
+      }
+    }
+
+    /* ========== 装饰细线 ========== */
+    .ornament-line {
+      width: 50px;
+      height: 1px;
+      background: rgba(130, 140, 120, 0.3);
+      margin: 24px auto 8px;
+      opacity: 0;
+      animation: scaleLine 0.7s ease-out 0.55s forwards;
+    }
+
+    @media (max-width: 480px) {
+      .ornament-line {
+        width: 40px;
+        margin: 20px auto 6px;
+      }
+    }
+
+    /* ========== 底部版权区域 ========== */
+    .footer-note {
+      margin-top: 20px;
+      font-size: 0.8rem;
+      color: #8b9880;
+      letter-spacing: 0.04em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      border-top: 1px solid rgba(160, 170, 140, 0.2);
+      padding-top: 28px;
+      width: 100%;
+      opacity: 0;
+      animation: fadeIn 0.8s ease-out 0.65s forwards;
+      transition: font-size 0.2s, padding-top 0.2s;
+    }
+
+    .copyright {
+      font-weight: 350;
+      opacity: 0.85;
+    }
+
+    @media (max-width: 480px) {
+      .footer-note {
+        font-size: 0.7rem;
+        padding-top: 22px;
+        margin-top: 16px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .footer-note {
+        font-size: 0.65rem;
+        padding-top: 18px;
+      }
+    }
+
+    /* 卡片内边距响应式微调 */
+    @media (max-width: 600px) {
+      .container {
+        padding: 40px 24px 48px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 36px 20px 44px;
+        margin: 0 16px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .container {
+        padding: 32px 16px 40px;
+        margin: 0 12px;
+      }
+    }
+
+    /* ========== 动画关键帧 ========== */
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      100% {
+        opacity: 0.9;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInDown {
+      0% {
+        opacity: 0;
+        transform: translateY(-12px);
+      }
+      100% {
+        opacity: 0.85;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 0.8;
+      }
+    }
+
+    @keyframes scaleLine {
+      0% {
+        opacity: 0;
+        transform: scaleX(0);
+      }
+      100% {
+        opacity: 0.8;
+        transform: scaleX(1);
+      }
+    }
+
+    /* 针对 prefers-reduced-motion 的用户保留基础可见性 */
+    @media (prefers-reduced-motion: reduce) {
+      .logo-corner,
+      .main-title,
+      .sub-pending,
+      .description,
+      .ornament-line,
+      .footer-note {
+        animation: none;
+        opacity: 1;
+      }
+      .main-title,
+      .description {
+        opacity: 0.9;
+      }
+      .logo-corner {
+        opacity: 0.85;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 浅格子衫线条背景层（响应式网格密度） -->
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <!-- 左上角固定的LOGO文字 -->
+  <div class="logo-corner">NONWASTE</div>
+
+  <!-- 核心内容卡片 -->
+  <main class="container">
+    <h1 class="main-title">敬请期待</h1>
+    
+    <div class="sub-pending">coming soon</div>
+    
+    <p class="description">我们正在为您准备一些特别的东西</p>
+    
+    <div class="ornament-line"></div>
+    
+    <div class="footer-note">
+      <span class="copyright">© 2026 NONWASTE. 版权所有.</span>
+    </div>
+  </main>
+</body>
+  </html>
