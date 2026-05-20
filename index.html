@@ -14,6 +14,8 @@
       --green: #4caf84;
       --red: #e0555c;
       --yellow: #d4a853;
+      --purple: #b98cd6;
+      --blue: #5b9bd5;
       --text-primary: #f2f2f2;
       --text-secondary: #b0b0b0;
       --surface: rgba(18, 20, 22, 0.75);
@@ -75,13 +77,8 @@
       animation: pulse 2s infinite;
     }
     @keyframes pulse {
-      0%,
-      100% {
-        opacity: 0.6;
-      }
-      50% {
-        opacity: 1;
-      }
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
     }
     .stats-grid {
       display: grid;
@@ -133,30 +130,16 @@
       background: #666;
       flex-shrink: 0;
     }
-    .model-chip.green {
-      border-color: rgba(76, 175, 132, 0.4);
-      color: #a5d6a7;
-    }
-    .model-chip.green .dot {
-      background: var(--green);
-      box-shadow: 0 0 6px var(--green);
-    }
-    .model-chip.yellow {
-      border-color: rgba(212, 168, 83, 0.5);
-      color: #dbb862;
-    }
-    .model-chip.yellow .dot {
-      background: var(--yellow);
-      box-shadow: 0 0 6px var(--yellow);
-    }
-    .model-chip.red {
-      border-color: rgba(224, 85, 92, 0.5);
-      color: #e88488;
-    }
-    .model-chip.red .dot {
-      background: var(--red);
-      box-shadow: 0 0 6px var(--red);
-    }
+    .model-chip.green { border-color: rgba(76, 175, 132, 0.4); color: #a5d6a7; }
+    .model-chip.green .dot { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .model-chip.yellow { border-color: rgba(212, 168, 83, 0.5); color: #dbb862; }
+    .model-chip.yellow .dot { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+    .model-chip.red { border-color: rgba(224, 85, 92, 0.5); color: #e88488; }
+    .model-chip.red .dot { background: var(--red); box-shadow: 0 0 6px var(--red); }
+    .model-chip.purple { border-color: rgba(185, 140, 214, 0.5); color: #c9a2e0; }
+    .model-chip.purple .dot { background: var(--purple); box-shadow: 0 0 6px var(--purple); }
+    .model-chip.blue { border-color: rgba(91, 155, 213, 0.5); color: #8ab8e8; }
+    .model-chip.blue .dot { background: var(--blue); box-shadow: 0 0 6px var(--blue); }
     .table-wrap {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
@@ -190,31 +173,10 @@
       font-size: 0.65rem;
       font-weight: 500;
     }
-    .badge.pass {
-      background: rgba(76, 175, 132, 0.15);
-      color: #8fdda0;
-    }
-    .badge.fail {
-      background: rgba(224, 85, 92, 0.2);
-      color: #e88488;
-    }
-    .badge.limit {
-      background: rgba(212, 168, 83, 0.2);
-      color: #dbb862;
-    }
-    .badge.warn {
-      background: rgba(212, 168, 83, 0.1);
-      color: #dbb862;
-    }
-    .lang-tag {
-      display: inline-block;
-      font-size: 0.6rem;
-      color: #999;
-      margin-left: 4px;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 0.1rem 0.4rem;
-      border-radius: 8px;
-    }
+    .badge.pass { background: rgba(76, 175, 132, 0.15); color: #8fdda0; }
+    .badge.fail { background: rgba(224, 85, 92, 0.2); color: #e88488; }
+    .badge.limit { background: rgba(212, 168, 83, 0.2); color: #dbb862; }
+    .badge.warn { background: rgba(212, 168, 83, 0.1); color: #dbb862; }
     .clickable {
       cursor: pointer;
       color: #aaa;
@@ -222,84 +184,43 @@
       text-decoration: underline;
       text-decoration-style: dotted;
     }
-    .clickable:hover {
-      color: #fff;
-    }
-    .small {
-      font-size: 0.7rem;
-      color: #888;
-    }
+    .clickable:hover { color: #fff; }
+    .small { font-size: 0.7rem; color: #888; }
     .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(6px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
       z-index: 1000;
     }
     .modal-box {
-      background: rgba(30, 30, 32, 0.9);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 20px;
-      padding: 2rem;
-      text-align: center;
-      color: #ddd;
-      max-width: 400px;
-      width: 90%;
+      background: rgba(30,30,32,0.9); backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.2); border-radius: 20px;
+      padding: 2rem; color: #ddd; max-width: 400px; width: 90%;
     }
-    .modal-box h2 {
-      margin-bottom: 1rem;
-      font-weight: 500;
-    }
-    .modal-box p {
-      color: #aaa;
-      font-size: 0.9rem;
-      margin-bottom: 1.5rem;
-    }
+    .modal-box h2 { margin-bottom: 1rem; font-weight: 500; }
+    .modal-box p { color: #aaa; font-size: 0.9rem; margin-bottom: 1.5rem; }
     .btn-primary {
-      padding: 0.6rem 1.4rem;
-      border-radius: 10px;
-      border: none;
-      background: rgba(255, 255, 255, 0.2);
-      color: #fff;
-      font-weight: 500;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
+      padding: 0.6rem 1.4rem; border-radius: 10px; border: none;
+      background: rgba(255,255,255,0.2); color: #fff; font-weight: 500;
+      cursor: pointer; backdrop-filter: blur(10px);
     }
-    .btn-primary:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
+    .btn-primary:hover { background: rgba(255,255,255,0.3); }
     @media (max-width: 700px) {
-      body {
-        padding: 0.8rem;
-      }
-      .header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      body { padding: 0.8rem; }
+      .header { flex-direction: column; align-items: flex-start; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
 <body>
   <div class="container" id="mainContent">
-    <!-- Header -->
     <div class="card header">
       <div class="logo">
         <h1><span class="status-led"></span> API 能力即时诊断</h1>
       </div>
-      <div style="color:#aaa; font-size:0.8rem;">nonwaste.cn · 中英文随机实际调用</div>
+      <div style="color:#aaa; font-size:0.8rem;">nonwaste.cn · 随机中英文实际调用</div>
     </div>
 
-    <!-- 统计 -->
     <div class="card">
       <div class="stats-grid" id="statsGrid">
         <div class="stat-card"><div class="stat-value" id="sumTotal">0</div><div class="stat-label">总测试</div></div>
@@ -309,18 +230,18 @@
       </div>
     </div>
 
-    <!-- 模型状态 -->
     <div class="card">
       <div style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.8rem; display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
         <span>模型状态</span>
-        <span style="display:flex; gap:0.3rem; align-items:center;"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--green);"></span>可用</span>
-        <span style="display:flex; gap:0.3rem; align-items:center;"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--yellow);"></span>限流</span>
-        <span style="display:flex; gap:0.3rem; align-items:center;"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--red);"></span>不可用</span>
+        <span style="display:flex; gap:0.3rem; align-items:center;"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--green);"></span>全部可用</span>
+        <span style="display:flex; gap:0.3rem; align-items:center;"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--red);"></span>全部失败</span>
+        <span style="display:flex; gap:0.3rem; align-items:center;"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--yellow);"></span>全部限流</span>
+        <span style="display:flex; gap:0.3rem; align-items:center;"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--blue);"></span>部分失败</span>
+        <span style="display:flex; gap:0.3rem; align-items:center;"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--purple);"></span>部分限流</span>
       </div>
       <div class="model-bar" id="modelStatusList"></div>
     </div>
 
-    <!-- 结果表格 -->
     <div class="card">
       <div class="table-wrap">
         <table>
@@ -345,7 +266,6 @@
 
   <script>
     (function() {
-      // 固定配置
       const API_BASE = 'https://nonwaste.cn/v1';
       const API_KEYS = [
         'sk-0fw8rmuQAqdjMTeu9VeF5o0EorMb3PhOPtd7dd39hvJn4mwZ',
@@ -361,7 +281,6 @@
       ];
       const COOLDOWN_MS = 10 * 60 * 1000;
 
-      // 中英文测试内容
       const PROMPTS = {
         nonStream: {
           zh: { role: 'user', content: '你好，请用一句话介绍你自己。' },
@@ -377,12 +296,10 @@
         }
       };
 
-      // 随机选择密钥
       function randomKey() {
         return API_KEYS[Math.floor(Math.random() * API_KEYS.length)];
       }
 
-      // 随机选择语言
       function randomLang() {
         return Math.random() < 0.5 ? 'zh' : 'en';
       }
@@ -419,7 +336,7 @@
 
       function checkAccessCooldown() {
         try {
-          const lastVisit = localStorage.getItem('api_diag_v2_last');
+          const lastVisit = localStorage.getItem('api_diag_v3_last');
           if (lastVisit) {
             const elapsed = Date.now() - parseInt(lastVisit);
             if (elapsed < COOLDOWN_MS) {
@@ -427,11 +344,9 @@
               return false;
             }
           }
-          localStorage.setItem('api_diag_v2_last', Date.now().toString());
+          localStorage.setItem('api_diag_v3_last', Date.now().toString());
           return true;
-        } catch (e) {
-          return true;
-        }
+        } catch (e) { return true; }
       }
 
       function showCooldownModal() {
@@ -447,6 +362,24 @@
         document.getElementById('closeModalBtn').addEventListener('click', () => overlay.remove());
       }
 
+      function getModelColor(resultsArray) {
+        let pass = 0, realFail = 0, rateLimit = 0;
+        resultsArray.forEach(r => {
+          if (!r) return;
+          if (r.success) pass++;
+          else if (isRateLimitError(r.error)) rateLimit++;
+          else realFail++;
+        });
+        const total = pass + realFail + rateLimit;
+        if (total === 0) return '';
+        if (pass === total) return 'green';
+        if (realFail === total) return 'red';
+        if (rateLimit === total) return 'yellow';
+        if (realFail > 0) return 'blue';
+        if (rateLimit > 0) return 'purple';
+        return '';
+      }
+
       function updateModelStatusView() {
         if (!state.models.length) {
           modelStatusList.innerHTML = '<span class="small">暂无模型</span>';
@@ -457,22 +390,14 @@
           let colorClass = '';
           if (res) {
             const results = [res.nonStream, res.stream, res.toolCall];
-            const hasFail = results.some(r => r && !r.success);
-            if (!hasFail) colorClass = 'green';
-            else {
-              const allLimits = results.every(r => r && !r.success && isRateLimitError(r.error));
-              colorClass = allLimits ? 'yellow' : 'red';
-            }
+            colorClass = getModelColor(results);
           }
           return `<span class="model-chip ${colorClass}" title="${escapeHtml(m.id)}"><span class="dot"></span>${escapeHtml(m.id)}</span>`;
         }).join('');
       }
 
       function updateSummary() {
-        let total = 0,
-          pass = 0,
-          fail = 0,
-          limitCount = 0;
+        let total = 0, pass = 0, fail = 0, limitCount = 0;
         for (const r of Object.values(state.results)) {
           for (const key of ['nonStream', 'stream', 'toolCall']) {
             if (r[key]) {
@@ -499,27 +424,15 @@
         const models = Object.keys(state.results).sort();
         resultsBody.innerHTML = models.map(model => {
           const r = state.results[model];
-          const n = r.nonStream || {},
-            s = r.stream || {},
-            t = r.toolCall || {};
+          const n = r.nonStream || {}, s = r.stream || {}, t = r.toolCall || {};
 
-          const nonLangTag = n.lang ? `<span class="lang-tag">${n.lang === 'zh' ? '中文' : 'EN'}</span>` : '';
-          const strLangTag = s.lang ? `<span class="lang-tag">${s.lang === 'zh' ? '中文' : 'EN'}</span>` : '';
-          const toolLangTag = t.lang ? `<span class="lang-tag">${t.lang === 'zh' ? '中文' : 'EN'}</span>` : '';
-
-          let nonHtml = n.success ?
-            `<span class="badge pass">通过</span>${nonLangTag}` :
-            (isRateLimitError(n.error) ? '<span class="badge limit">限流</span>' :
-              '<span class="badge fail">失败</span>');
-          let strHtml = s.success ?
-            `<span class="badge pass">通过</span>${strLangTag}` :
-            (isRateLimitError(s.error) ? '<span class="badge limit">限流</span>' :
-              '<span class="badge fail">失败</span>');
+          let nonHtml = n.success ? '<span class="badge pass">通过</span>' :
+            (isRateLimitError(n.error) ? '<span class="badge limit">限流</span>' : '<span class="badge fail">失败</span>');
+          let strHtml = s.success ? '<span class="badge pass">通过</span>' :
+            (isRateLimitError(s.error) ? '<span class="badge limit">限流</span>' : '<span class="badge fail">失败</span>');
           let toolHtml = t.success ?
-            (t.hasTools ? `<span class="badge pass">已调用</span>${toolLangTag}` :
-              `<span class="badge warn">未调用</span>${toolLangTag}`) :
-            (isRateLimitError(t.error) ? '<span class="badge limit">限流</span>' :
-              '<span class="badge fail">失败</span>');
+            (t.hasTools ? '<span class="badge pass">已调用</span>' : '<span class="badge warn">未调用</span>') :
+            (isRateLimitError(t.error) ? '<span class="badge limit">限流</span>' : '<span class="badge fail">失败</span>');
 
           return `<tr>
             <td>${escapeHtml(model)}</td>
@@ -576,8 +489,7 @@
           return { success: false, elapsed, error: `${resp.status}`, detail: txt, lang, keyUsed: key };
         }
         const data = await resp.json();
-        return { success: true, elapsed, content: data.choices?.[0]?.message?.content, usage: data.usage || null, lang,
-          keyUsed: key };
+        return { success: true, elapsed, content: data.choices?.[0]?.message?.content, usage: data.usage || null, lang, keyUsed: key };
       }
 
       async function testStream(model) {
@@ -585,20 +497,15 @@
         const lang = randomLang();
         const prompt = PROMPTS.stream[lang];
         const t0 = performance.now();
-        let firstByte = null,
-          content = '',
-          chunks = 0,
-          usage = null;
+        let firstByte = null, content = '', chunks = 0, usage = null;
         const resp = await fetchWithTimeout(API_BASE + '/chat/completions', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ model, messages: [prompt], stream: true, max_tokens: 100,
-            stream_options: { include_usage: true } })
+          body: JSON.stringify({ model, messages: [prompt], stream: true, max_tokens: 100, stream_options: { include_usage: true } })
         }, 60);
         if (!resp.ok) {
           const txt = await resp.text().catch(() => '');
-          return { success: false, elapsed: performance.now() - t0, error: `${resp.status}`, detail: txt, lang,
-            keyUsed: key };
+          return { success: false, elapsed: performance.now() - t0, error: `${resp.status}`, detail: txt, lang, keyUsed: key };
         }
         const reader = resp.body.getReader();
         const decoder = new TextDecoder();
@@ -614,9 +521,7 @@
             if (!line.startsWith('data:')) continue;
             const d = line.slice(5).trim();
             if (d === '[DONE]') continue;
-            try { const j = JSON.parse(d); if (j.usage) usage = j.usage; const c = j.choices?.[0]?.delta?.content; if (c)
-                content += c;
-              chunks++; } catch {}
+            try { const j = JSON.parse(d); if (j.usage) usage = j.usage; const c = j.choices?.[0]?.delta?.content; if (c) content += c; chunks++; } catch {}
           }
         }
         return { success: true, elapsed: performance.now() - t0, firstByte, content, chunks, usage, lang, keyUsed: key };
@@ -630,9 +535,7 @@
         const resp = await fetchWithTimeout(API_BASE + '/chat/completions', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ model, messages: [prompt], tools: [{ type: 'function', function: { name: 'get_weather',
-                parameters: { type: 'object', properties: { city: { type: 'string' } }, required: ['city'] } } }],
-            tool_choice: 'auto', stream: false })
+          body: JSON.stringify({ model, messages: [prompt], tools: [{ type: 'function', function: { name: 'get_weather', parameters: { type: 'object', properties: { city: { type: 'string' } }, required: ['city'] } } }], tool_choice: 'auto', stream: false })
         });
         const elapsed = performance.now() - t0;
         if (!resp.ok) {
@@ -642,17 +545,14 @@
         const data = await resp.json();
         const hasTools = !!data.choices?.[0]?.message?.tool_calls;
         const toolCalls = data.choices?.[0]?.message?.tool_calls;
-        return { success: true, elapsed, hasTools, toolCalls, usage: data.usage || null, content: data.choices?.[0]
-            ?.message?.content, lang, keyUsed: key };
+        return { success: true, elapsed, hasTools, toolCalls, usage: data.usage || null, content: data.choices?.[0]?.message?.content, lang, keyUsed: key };
       }
 
       async function runSingleModelTests(model) {
         const res = { nonStream: null, stream: null, toolCall: null };
-        try { res.nonStream = await testNonStream(model); } catch (e) { res.nonStream = { success: false, error: e
-            .message }; }
+        try { res.nonStream = await testNonStream(model); } catch (e) { res.nonStream = { success: false, error: e.message }; }
         try { res.stream = await testStream(model); } catch (e) { res.stream = { success: false, error: e.message }; }
-        try { res.toolCall = await testToolCall(model); } catch (e) { res.toolCall = { success: false, error: e
-            .message }; }
+        try { res.toolCall = await testToolCall(model); } catch (e) { res.toolCall = { success: false, error: e.message }; }
         return res;
       }
 
@@ -671,17 +571,14 @@
       async function runFullTest() {
         if (state.isRunning) return;
         state.isRunning = true;
-        resultsBody.innerHTML =
-          '<tr><td colspan="9" style="text-align:center;color:#aaa;">正在从 nonwaste.cn 获取模型列表…</td></tr>';
+        resultsBody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#aaa;">正在从 nonwaste.cn 获取模型列表…</td></tr>';
         await refreshModels();
         if (!state.models.length) {
-          resultsBody.innerHTML =
-            '<tr><td colspan="9" style="text-align:center;color:#e88488;">未能获取模型列表，请检查 API 连接。</td></tr>';
+          resultsBody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#e88488;">未能获取模型列表，请检查 API 连接。</td></tr>';
           state.isRunning = false;
           return;
         }
-        resultsBody.innerHTML =
-          '<tr><td colspan="9" style="text-align:center;color:#aaa;">模型列表已就绪，开始随机中英文实际调用测试…</td></tr>';
+        resultsBody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#aaa;">模型列表已就绪，开始随机中英文实际调用测试…</td></tr>';
         const models = state.models.map(m => m.id);
         for (const model of models) {
           const res = await runSingleModelTests(model);
