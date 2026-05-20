@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes, viewport-fit=cover">
-  <title>API 全能力测试 · 限流感知版</title>
+  <title>API 全能力测试 · 实际调用反馈</title>
   <style>
     * {
       margin: 0;
@@ -26,7 +26,6 @@
       --radius: 18px;
       --radius-sm: 10px;
       --transition-smooth: 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
-      --transition-fast: 0.2s ease;
       --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
       --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Consolas', monospace;
     }
@@ -42,7 +41,6 @@
       display: flex;
       justify-content: center;
       -webkit-tap-highlight-color: transparent;
-      letter-spacing: -0.01em;
     }
 
     .glass-panel {
@@ -97,15 +95,12 @@
       font-size: 1.2rem;
       font-weight: 500;
       color: #ddd;
-      backdrop-filter: blur(10px);
-      transition: transform 0.3s ease;
     }
 
     .logo-text h1 {
       font-weight: 550;
       font-size: 1.25rem;
       color: var(--text-primary);
-      letter-spacing: -0.3px;
     }
 
     .logo-text .sub {
@@ -123,7 +118,6 @@
       font-weight: 450;
       color: var(--text-secondary);
       border: 1px solid rgba(255, 255, 255, 0.12);
-      letter-spacing: 0.3px;
     }
 
     .form-grid {
@@ -135,9 +129,7 @@
     }
 
     @media (max-width: 700px) {
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
+      .form-grid { grid-template-columns: 1fr; }
     }
 
     .input-group {
@@ -174,10 +166,6 @@
       box-shadow: 0 0 16px rgba(255, 255, 255, 0.05);
     }
 
-    .input-field::placeholder {
-      color: #555;
-    }
-
     .btn {
       padding: 0.7rem 1.3rem;
       border-radius: 12px;
@@ -201,7 +189,6 @@
     .btn-primary {
       background: rgba(255, 255, 255, 0.15);
       border-color: rgba(255, 255, 255, 0.25);
-      font-weight: 500;
     }
 
     .btn-primary:hover:not(:disabled) {
@@ -211,31 +198,11 @@
       box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
     }
 
-    .btn:active:not(:disabled) {
-      transform: scale(0.98);
-    }
-
-    .btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      filter: grayscale(20%);
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .btn-outline:hover:not(:disabled) {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.45);
-    }
-
-    .btn-sm {
-      padding: 0.4rem 0.8rem;
-      font-size: 0.74rem;
-      border-radius: 8px;
-    }
+    .btn:active:not(:disabled) { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(20%); }
+    .btn-outline { background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); }
+    .btn-outline:hover:not(:disabled) { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.45); }
+    .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.74rem; border-radius: 8px; }
 
     .model-cloud {
       display: flex;
@@ -254,12 +221,11 @@
       border: 1px solid rgba(255, 255, 255, 0.14);
       color: #bbb;
       cursor: pointer;
-      transition: background 0.2s, border-color 0.2s, color 0.2s;
-      user-select: none;
       display: flex;
       align-items: center;
       gap: 0.4rem;
-      backdrop-filter: blur(4px);
+      transition: 0.2s;
+      user-select: none;
     }
 
     .model-tag.selected {
@@ -273,12 +239,9 @@
       height: 7px;
       border-radius: 50%;
       background: #555;
-      transition: background 0.2s;
     }
 
-    .model-tag.selected .dot {
-      background: #ddd;
-    }
+    .model-tag.selected .dot { background: #ddd; }
 
     .action-row {
       display: flex;
@@ -301,7 +264,6 @@
       height: 5px;
       background: rgba(255, 255, 255, 0.08);
       border-radius: 8px;
-      width: 100%;
       overflow: hidden;
     }
 
@@ -321,17 +283,13 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
       animation: shimmer 2s infinite;
     }
 
     @keyframes shimmer {
-      0% {
-        transform: translateX(-100%);
-      }
-      100% {
-        transform: translateX(100%);
-      }
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
     }
 
     .progress-meta {
@@ -347,11 +305,10 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(255,255,255,0.04);
       padding: 0.3rem 0.9rem;
       border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.08);
     }
 
     .live-dot {
@@ -359,26 +316,18 @@
       height: 8px;
       border-radius: 50%;
       background: #fff;
-      box-shadow: 0 0 10px #fff, 0 0 20px rgba(255, 255, 255, 0.5);
+      box-shadow: 0 0 10px #fff;
       animation: breathe 1.2s ease-in-out infinite;
     }
 
     @keyframes breathe {
-      0%,
-      100% {
-        opacity: 0.4;
-        transform: scale(0.9);
-      }
-      50% {
-        opacity: 1;
-        transform: scale(1.3);
-      }
+      0%,100% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.3); }
     }
 
     .live-text {
       font-size: 0.78rem;
       color: #ddd;
-      font-weight: 450;
       max-width: 220px;
       white-space: nowrap;
       overflow: hidden;
@@ -393,9 +342,9 @@
     }
 
     .stat-card {
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(255,255,255,0.03);
       backdrop-filter: blur(6px);
-      border: 1px solid rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255,255,255,0.07);
       border-radius: 14px;
       padding: 0.9rem 0.6rem;
       text-align: center;
@@ -406,7 +355,6 @@
       font-weight: 600;
       color: #ddd;
       line-height: 1;
-      letter-spacing: -0.5px;
     }
 
     .stat-label {
@@ -415,7 +363,6 @@
       letter-spacing: 0.5px;
       color: var(--text-muted);
       margin-top: 4px;
-      font-weight: 450;
     }
 
     .table-container {
@@ -436,27 +383,20 @@
       font-weight: 500;
       font-size: 0.68rem;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
       color: #888;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      white-space: nowrap;
-      background: rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.2);
     }
 
     .results-table td {
       padding: 0.7rem 0.8rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
       color: #ccc;
       vertical-align: middle;
     }
 
-    .results-table tbody tr {
-      transition: background 0.2s;
-    }
-
-    .results-table tbody tr:hover {
-      background: rgba(255, 255, 255, 0.02);
-    }
+    .results-table tbody tr { transition: background 0.2s; }
+    .results-table tbody tr:hover { background: rgba(255,255,255,0.02); }
 
     .model-name-cell {
       font-weight: 500;
@@ -473,30 +413,13 @@
       border-radius: 16px;
       font-size: 0.68rem;
       font-weight: 500;
-      background: rgba(255, 255, 255, 0.06);
-      letter-spacing: 0.2px;
+      background: rgba(255,255,255,0.06);
     }
 
-    .status-pass {
-      background: rgba(110, 207, 138, 0.12);
-      color: #8fdda0;
-    }
-
-    .status-fail {
-      background: rgba(224, 103, 107, 0.15);
-      color: #e88488;
-    }
-
-    .status-limit {
-      background: rgba(212, 168, 83, 0.15);
-      color: #dbb862;
-      border: 1px solid rgba(212, 168, 83, 0.3);
-    }
-
-    .status-warn {
-      background: rgba(212, 168, 83, 0.1);
-      color: #dbb862;
-    }
+    .status-pass { background: rgba(110,207,138,0.12); color: #8fdda0; }
+    .status-fail { background: rgba(224,103,107,0.15); color: #e88488; }
+    .status-limit { background: rgba(212,168,83,0.15); color: #dbb862; border: 1px solid rgba(212,168,83,0.3); }
+    .status-warn { background: rgba(212,168,83,0.1); color: #dbb862; }
 
     .clickable {
       cursor: pointer;
@@ -505,13 +428,11 @@
       font-size: 0.9rem;
     }
 
-    .clickable:hover {
-      color: #fff;
-    }
+    .clickable:hover { color: #fff; }
 
     .copy-err-btn {
       background: none;
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255,255,255,0.18);
       color: #999;
       padding: 1px 5px;
       border-radius: 5px;
@@ -519,19 +440,14 @@
       cursor: pointer;
       margin-left: 4px;
       transition: all 0.2s;
-      backdrop-filter: blur(4px);
     }
 
-    .copy-err-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #ddd;
-    }
+    .copy-err-btn:hover { background: rgba(255,255,255,0.08); color: #ddd; }
 
     .token-info {
       font-size: 0.62rem;
       color: #888;
       margin-left: 4px;
-      font-weight: 400;
     }
 
     .retry-info {
@@ -553,41 +469,54 @@
       cursor: default;
     }
 
-    /* Mobile cards */
+    /* 回复预览 */
+    .reply-preview {
+      font-size: 0.62rem;
+      color: #999;
+      margin-left: 4px;
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: inline-block;
+      vertical-align: middle;
+      border-left: 1px solid rgba(255,255,255,0.15);
+      padding-left: 6px;
+    }
+
+    .tool-preview {
+      font-size: 0.62rem;
+      color: #b0b0b0;
+      margin-left: 4px;
+      max-width: 130px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
     @media (max-width: 750px) {
-      .table-container {
-        padding: 0.8rem;
+      .table-container { padding: 0.8rem; }
+      .results-table thead { display: none; }
+      .results-table, .results-table tbody, .results-table tr, .results-table td {
+        display: block; width: 100%;
       }
-
-      .results-table thead {
-        display: none;
-      }
-
-      .results-table,
-      .results-table tbody,
-      .results-table tr,
-      .results-table td {
-        display: block;
-        width: 100%;
-      }
-
       .results-table tr {
         margin-bottom: 1rem;
-        background: rgba(255, 255, 255, 0.02);
+        background: rgba(255,255,255,0.02);
         border-radius: 14px;
         padding: 0.8rem 0.7rem;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255,255,255,0.05);
       }
-
       .results-table td {
         border-bottom: none;
-        padding: 0.3rem 0.3rem;
+        padding: 0.3rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
         font-size: 0.76rem;
       }
-
       .results-table td::before {
         content: attr(data-label);
         font-weight: 500;
@@ -597,186 +526,89 @@
         letter-spacing: 0.4px;
         margin-right: 0.8rem;
       }
-
-      .model-name-cell {
-        font-size: 0.85rem;
-        font-weight: 550;
-        justify-content: flex-start;
-      }
-
-      .model-name-cell::before {
-        display: none;
-      }
+      .model-name-cell { font-size: 0.85rem; font-weight: 550; justify-content: flex-start; }
+      .model-name-cell::before { display: none; }
     }
 
     .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(10px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      animation: fadeIn 0.2s ease;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; animation: fadeIn 0.2s ease;
     }
 
     .modal-content {
-      background: rgba(26, 26, 28, 0.9);
-      backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 20px;
-      padding: 1.8rem;
-      max-width: 680px;
-      width: 92%;
-      max-height: 82vh;
-      overflow-y: auto;
-      color: #ddd;
-      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.7);
+      background: rgba(26,26,28,0.9); backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.15); border-radius: 20px;
+      padding: 1.8rem; max-width: 680px; width: 92%; max-height: 82vh;
+      overflow-y: auto; color: #ddd; box-shadow: 0 28px 60px rgba(0,0,0,0.7);
     }
 
     .modal-content pre {
-      background: rgba(0, 0, 0, 0.5);
-      padding: 1rem;
-      border-radius: 12px;
-      font-size: 0.7rem;
-      overflow-x: auto;
-      white-space: pre-wrap;
-      word-break: break-all;
-      font-family: var(--font-mono);
-      color: #bbb;
+      background: rgba(0,0,0,0.5); padding: 1rem; border-radius: 12px;
+      font-size: 0.7rem; overflow-x: auto; white-space: pre-wrap;
+      word-break: break-all; font-family: var(--font-mono); color: #bbb;
     }
 
     .modal-close {
-      float: right;
-      background: none;
-      border: none;
-      color: #888;
-      font-size: 1.4rem;
-      cursor: pointer;
-      transition: color 0.2s;
+      float: right; background: none; border: none; color: #888;
+      font-size: 1.4rem; cursor: pointer;
     }
 
-    .modal-close:hover {
-      color: #fff;
-    }
+    .modal-close:hover { color: #fff; }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     .spinner {
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      border-top-color: #ccc;
-      border-radius: 50%;
-      animation: spin 0.6s linear infinite;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.2); border-top-color: #ccc;
+      border-radius: 50%; animation: spin 0.6s linear infinite;
     }
 
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     .toast-area {
-      position: fixed;
-      top: 1.5rem;
-      right: 1.5rem;
-      z-index: 2000;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      pointer-events: none;
+      position: fixed; top: 1.5rem; right: 1.5rem; z-index: 2000;
+      display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none;
     }
 
     .toast {
-      padding: 0.7rem 1.2rem;
-      border-radius: 10px;
-      background: rgba(22, 22, 24, 0.85);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #ddd;
-      font-size: 0.78rem;
-      font-weight: 450;
+      padding: 0.7rem 1.2rem; border-radius: 10px;
+      background: rgba(22,22,24,0.85); backdrop-filter: blur(15px);
+      border: 1px solid rgba(255,255,255,0.1); color: #ddd;
+      font-size: 0.78rem; font-weight: 450;
       animation: toastIn 0.35s ease, toastOut 0.3s 2.8s forwards;
       pointer-events: auto;
-      letter-spacing: 0.2px;
     }
 
     @keyframes toastIn {
-      from {
-        opacity: 0;
-        transform: translateX(60px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+      from { opacity: 0; transform: translateX(60px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
     @keyframes toastOut {
-      to {
-        opacity: 0;
-        transform: translateY(-8px);
-      }
+      to { opacity: 0; transform: translateY(-8px); }
     }
 
     .hint {
-      font-size: 0.65rem;
-      color: #5a5a5a;
+      font-size: 0.65rem; color: #5a5a5a;
       padding: 0.2rem 2rem 0.6rem;
-      letter-spacing: 0.2px;
-    }
-
-    @media (max-width: 500px) {
-      .action-row {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .progress-wrap {
-        width: 100%;
-      }
-
-      .header {
-        padding: 1rem 1.2rem;
-      }
-
-      .glass-panel {
-        border-radius: 14px;
-      }
-
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Header -->
     <div class="glass-panel header">
       <div class="logo">
         <div class="logo-mark"><span>&#x25C7;</span></div>
         <div class="logo-text">
           <h1>API 全能力测试</h1>
-          <div class="sub">非流式 · 流式 · 工具调用</div>
+          <div class="sub">非流式 · 流式 · 工具调用 · 真实反馈</div>
         </div>
       </div>
       <div class="badge">OpenAI 兼容 · 限流感知</div>
     </div>
 
-    <!-- Config -->
     <div class="glass-panel">
       <div class="form-grid">
         <div class="input-group">
@@ -791,7 +623,6 @@
       </div>
     </div>
 
-    <!-- Models -->
     <div class="glass-panel" id="modelsCard" style="display:none;">
       <div class="action-row">
         <span style="font-weight:500;color:#ccc;font-size:0.88rem;" id="modelCountLabel">模型列表</span>
@@ -804,14 +635,13 @@
       <div class="model-cloud" id="modelsContainer"></div>
     </div>
 
-    <!-- Control + Live Indicator -->
     <div class="glass-panel" id="testControlCard" style="display:none;">
       <div class="action-row">
         <div class="progress-wrap">
           <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
           <div class="progress-meta">
             <span class="progress-label" id="progressLabel">就绪</span>
-            <div class="live-indicator" id="liveIndicator" style="opacity:0; transition: opacity 0.3s;">
+            <div class="live-indicator" id="liveIndicator" style="opacity:0;">
               <span class="live-dot"></span>
               <span class="live-text" id="liveText">等待开始</span>
             </div>
@@ -826,13 +656,12 @@
       <div style="padding:0.5rem 2rem;display:flex;gap:1.5rem;font-size:0.75rem;color:#aaa;flex-wrap:wrap;align-items:center;">
         <span>超时 <input class="input-field" id="timeoutSec" type="number" value="60" min="10" style="width:55px;padding:0.3rem;text-align:center;"> s</span>
         <span>并发 <input class="input-field" id="concurrency" type="number" value="2" min="1" max="6" style="width:45px;padding:0.3rem;text-align:center;"></span>
-        <span>间隔 <input class="input-field" id="requestInterval" type="number" value="800" min="200" max="5000" step="100" style="width:60px;padding:0.3rem;text-align:center;"> ms</span>
+        <span>间隔 <input class="input-field" id="requestInterval" type="number" value="800" min="200" max="5000" style="width:60px;padding:0.3rem;text-align:center;"> ms</span>
         <span>重试 <input class="input-field" id="maxRetries" type="number" value="3" min="0" max="5" style="width:40px;padding:0.3rem;text-align:center;"></span>
       </div>
-      <div class="hint">指数退避重试 · 速率间隔控制 · 实时状态追踪 · 限流自动标记</div>
+      <div class="hint">指数退避 · 速率控制 · 实时反馈 · 回复预览</div>
     </div>
 
-    <!-- Summary -->
     <div class="glass-panel" id="summaryCard" style="display:none;">
       <div class="action-row" style="padding-bottom:0;">
         <span style="color:#ccc;font-weight:500;font-size:0.9rem;">测试汇总</span>
@@ -842,17 +671,16 @@
           <button class="btn btn-outline btn-sm" onclick="exportResults()">导出 JSON</button>
         </div>
       </div>
-      <div class="stats-grid" id="statsGrid">
+      <div class="stats-grid">
         <div class="stat-card"><div class="stat-value" id="sumTotal">0</div><div class="stat-label">总计</div></div>
         <div class="stat-card"><div class="stat-value" id="sumPass" style="color:#8fdda0;">0</div><div class="stat-label">通过</div></div>
         <div class="stat-card"><div class="stat-value" id="sumFail" style="color:#e88488;">0</div><div class="stat-label">失败</div></div>
-        <div class="stat-card"><div class="stat-value" id="sumRateLimit" style="color:#dbb862;">0</div><div class="stat-label">限流次数</div></div>
+        <div class="stat-card"><div class="stat-value" id="sumRateLimit" style="color:#dbb862;">0</div><div class="stat-label">限流</div></div>
         <div class="stat-card"><div class="stat-value" id="sumTokens" style="color:#9ac4da;">0</div><div class="stat-label">Tokens</div></div>
         <div class="stat-card"><div class="stat-value" id="sumModels" style="color:#eee;">0</div><div class="stat-label">模型</div></div>
       </div>
     </div>
 
-    <!-- Results -->
     <div class="glass-panel" id="resultsCard" style="display:none;">
       <div class="table-container">
         <table class="results-table">
@@ -895,7 +723,6 @@
       const apiKeyInp = $('#apiKey');
       const modelsCard = $('#modelsCard');
       const modelsContainer = $('#modelsContainer');
-      const modelCountLabel = $('#modelCountLabel');
       const testControlCard = $('#testControlCard');
       const progressFill = $('#progressFill');
       const progressLabel = $('#progressLabel');
@@ -923,12 +750,10 @@
         if (model && type && state.running) {
           liveText.textContent = `${model} · ${type}`;
           liveIndicator.style.opacity = '1';
-        } else if (!state.running) {
-          liveIndicator.style.opacity = '0';
-        }
+        } else if (!state.running) liveIndicator.style.opacity = '0';
       }
 
-      function showToast(msg, type = 'info') {
+      function showToast(msg) {
         const toast = document.createElement('div');
         toast.className = 'toast';
         toast.textContent = msg;
@@ -959,15 +784,13 @@
 
       function formatTime(ms) {
         if (ms == null || ms < 0) return '—';
-        if (ms < 1000) return Math.round(ms) + 'ms';
-        return (ms / 1000).toFixed(1) + 's';
+        return ms < 1000 ? Math.round(ms) + 'ms' : (ms / 1000).toFixed(1) + 's';
       }
 
       function isRateLimitError(msg) { return /429|rate.?limit|too.?many/i.test(msg || ''); }
-
       function isRetryableError(msg, code) {
-        if (code && (code === 429 || code === 503 || code === 502)) return true;
-        return /429|503|502|rate.?limit|too.?many|service.?unavailable|bad.?gateway/i.test(msg || '');
+        if (code === 429 || code === 503 || code === 502) return true;
+        return /429|503|502|rate.?limit|too.?many/i.test(msg || '');
       }
 
       async function waitForRateLimit() {
@@ -975,9 +798,8 @@
         const interval = parseInt(requestIntervalInp.value) || 800;
         const now = Date.now();
         const elapsed = now - state.globalLastRequestTime;
-        if (elapsed < interval && state.globalLastRequestTime > 0) {
+        if (elapsed < interval && state.globalLastRequestTime > 0)
           await new Promise(r => setTimeout(r, interval - elapsed));
-        }
         state.globalLastRequestTime = Date.now();
       }
 
@@ -1006,9 +828,9 @@
           try {
             const res = await fn();
             if (res.success) return { ...res, retries: i };
-            const codeMatch = (res.error || '').match(/^(\d{3})/);
-            const code = codeMatch ? parseInt(codeMatch[1]) : null;
-            if (isRetryableError(res.error, code) && i < maxRetries) {
+            const code = (res.error || '').match(/^(\d{3})/);
+            const codeNum = code ? parseInt(code[1]) : null;
+            if (isRetryableError(res.error, codeNum) && i < maxRetries) {
               if (isRateLimitError(res.error)) state.rateLimitCount++;
               detailAcc = res.detail || detailAcc;
               last = res;
@@ -1024,7 +846,7 @@
             return { success: false, elapsed: 0, error: e.message, retries: i };
           }
         }
-        return { success: false, elapsed: last?.elapsed || 0, error: (last?.error || '未知错误') + ` (重试${maxRetries}次)`, detail: detailAcc, retries: maxRetries };
+        return { success: false, elapsed: last?.elapsed || 0, error: (last?.error || '?') + ` (重试${maxRetries}次)`, detail: detailAcc, retries: maxRetries };
       }
 
       async function callNonStream(base, key, model, timeout, retries) {
@@ -1040,7 +862,7 @@
           const elapsed = performance.now() - t0;
           if (!resp.ok) {
             const txt = await resp.text().catch(() => '');
-            return { success: false, elapsed, error: `${resp.status} ${resp.statusText}`, detail: txt };
+            return { success: false, elapsed, error: `${resp.status}`, detail: txt };
           }
           const data = await resp.json();
           return { success: true, elapsed, content: data.choices?.[0]?.message?.content, usage: data.usage || null };
@@ -1062,7 +884,7 @@
           }, timeout);
           if (!resp.ok) {
             const txt = await resp.text().catch(() => '');
-            const err = new Error(`${resp.status} ${resp.statusText}`);
+            const err = new Error(`${resp.status}`);
             err.status = resp.status; err.detail = txt; err.isHttp = true;
             throw err;
           }
@@ -1110,43 +932,58 @@
           const elapsed = performance.now() - t0;
           if (!resp.ok) {
             const txt = await resp.text().catch(() => '');
-            return { success: false, elapsed, error: `${resp.status} ${resp.statusText}`, detail: txt };
+            return { success: false, elapsed, error: `${resp.status}`, detail: txt };
           }
           const data = await resp.json();
-          return { success: true, elapsed, hasTools: !!data.choices?.[0]?.message?.tool_calls, usage: data.usage || null, content: data.choices?.[0]?.message?.content };
+          const toolCalls = data.choices?.[0]?.message?.tool_calls;
+          return { success: true, elapsed, hasTools: !!toolCalls, toolCalls, usage: data.usage || null, content: data.choices?.[0]?.message?.content };
         }, retries);
       }
 
       function tokenLabel(usage) {
         if (!usage || usage.total_tokens == null) return '';
-        const t = usage.total_tokens; const p = usage.prompt_tokens; const c = usage.completion_tokens;
-        return `<span class="token-info" title="共${t} 提示${p??'?'} 生成${c??'?'}">${t} tk</span>`;
+        return `<span class="token-info" title="共${usage.total_tokens} 提示${usage.prompt_tokens??'?'} 生成${usage.completion_tokens??'?'}">${usage.total_tokens} tk</span>`;
       }
 
       function retryLabel(n) { return n ? `<span class="retry-info">&#x21bb;${n}</span>` : ''; }
 
-      function errorHint(err, detail) {
+      function errorHint(err) {
         if (!err) return '';
-        const full = (err + (detail ? ' | ' + detail : '')).replace(/"/g, '&quot;');
-        const short = (err.split(' ')[0] || '').substring(0, 25);
-        return `<span class="error-hint" title="${full}">${escapeHtml(short)}</span>`;
+        const short = err.split(' ')[0] || err;
+        return `<span class="error-hint" title="${escapeHtml(err)}">${escapeHtml(short.substring(0, 20))}</span>`;
+      }
+
+      function replyPreview(content) {
+        if (!content) return '';
+        const preview = content.replace(/\s+/g, ' ').substring(0, 30);
+        return `<span class="reply-preview" title="${escapeHtml(content)}">${escapeHtml(preview)}…</span>`;
+      }
+
+      function toolPreview(toolCalls) {
+        if (!toolCalls || !toolCalls.length) return '';
+        const name = toolCalls[0]?.function?.name || 'tool';
+        let args = '';
+        try { args = JSON.stringify(JSON.parse(toolCalls[0]?.function?.arguments || '{}')); } catch { args = toolCalls[0]?.function?.arguments || ''; }
+        return `<span class="tool-preview" title="${escapeHtml(args)}">${escapeHtml(name)}(${escapeHtml(args).substring(0, 20)})</span>`;
       }
 
       function renderRow(model, res) {
         const n = res.nonStream || {}, s = res.stream || {}, t = res.toolCall || {};
         const esc = escapeAttr(model), css = cssEscape(model);
-        const nonLimited = !n.success && isRateLimitError(n.error || '');
-        const strLimited = !s.success && isRateLimitError(s.error || '');
-        const toolLimited = !t.success && isRateLimitError(t.error || '');
+        const nonLimited = !n.success && isRateLimitError(n.error);
         const non = n.success ?
-          `<span class="status-badge status-pass">通过</span>${tokenLabel(n.usage)}${retryLabel(n.retries)}` :
-          `${nonLimited ? '<span class="status-badge status-limit">限流</span>' : '<span class="status-badge status-fail">失败</span>'}${retryLabel(n.retries)}${errorHint(n.error, n.detail)}<button class="copy-err-btn" onclick="event.stopPropagation();copyText('${escapeAttr(n.error+(n.detail?' | '+n.detail:''))}')">复制</button>`;
+          `<span class="status-badge status-pass">通过</span>${tokenLabel(n.usage)}${replyPreview(n.content)}${retryLabel(n.retries)}` :
+          `${nonLimited ? '<span class="status-badge status-limit">限流</span>' : '<span class="status-badge status-fail">失败</span>'}${errorHint(n.error)}<button class="copy-err-btn" onclick="event.stopPropagation();copyText('${escapeAttr(n.error+(n.detail?' | '+n.detail:''))}')">复制</button>`;
+
+        const strLimited = !s.success && isRateLimitError(s.error);
         const str = s.success ?
-          `<span class="status-badge status-pass">通过</span>${tokenLabel(s.usage)}${retryLabel(s.retries)}` :
-          `${strLimited ? '<span class="status-badge status-limit">限流</span>' : '<span class="status-badge status-fail">失败</span>'}${retryLabel(s.retries)}${errorHint(s.error, s.detail)}<button class="copy-err-btn" onclick="event.stopPropagation();copyText('${escapeAttr(s.error+(s.detail?' | '+s.detail:''))}')">复制</button>`;
+          `<span class="status-badge status-pass">通过</span>${tokenLabel(s.usage)}${replyPreview(s.content)}${retryLabel(s.retries)}` :
+          `${strLimited ? '<span class="status-badge status-limit">限流</span>' : '<span class="status-badge status-fail">失败</span>'}${errorHint(s.error)}<button class="copy-err-btn" onclick="event.stopPropagation();copyText('${escapeAttr(s.error+(s.detail?' | '+s.detail:''))}')">复制</button>`;
+
+        const toolLimited = !t.success && isRateLimitError(t.error);
         const tool = t.success ?
-          (t.hasTools ? `<span class="status-badge status-pass">已调用</span>` : '<span class="status-badge status-warn">未调用</span>') + tokenLabel(t.usage) + retryLabel(t.retries) :
-          `${toolLimited ? '<span class="status-badge status-limit">限流</span>' : '<span class="status-badge status-fail">失败</span>'}${retryLabel(t.retries)}${errorHint(t.error, t.detail)}<button class="copy-err-btn" onclick="event.stopPropagation();copyText('${escapeAttr(t.error+(t.detail?' | '+t.detail:''))}')">复制</button>`;
+          (t.hasTools ? `<span class="status-badge status-pass">已调用</span>${toolPreview(t.toolCalls)}` : '<span class="status-badge status-warn">未调用</span>') + tokenLabel(t.usage) + retryLabel(t.retries) :
+          `${toolLimited ? '<span class="status-badge status-limit">限流</span>' : '<span class="status-badge status-fail">失败</span>'}${errorHint(t.error)}<button class="copy-err-btn" onclick="event.stopPropagation();copyText('${escapeAttr(t.error+(t.detail?' | '+t.detail:''))}')">复制</button>`;
 
         return `<tr id="row-${css}" data-model="${esc}"><td class="model-name-cell" data-label="模型">${escapeHtml(model)}</td>
           <td data-label="非流式">${non}</td><td data-label="耗时">${formatTime(n.elapsed)}</td>
@@ -1161,33 +998,23 @@
         const r = state.results[model]; if (!r) return;
         const json = JSON.stringify({ model, ...r }, null, 2);
         const overlay = document.createElement('div'); overlay.className = 'modal-overlay';
-        overlay.innerHTML = `<div class="modal-content"><button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button><h3 style="margin-top:0;font-weight:500;">${escapeHtml(model)}</h3><pre>${escapeHtml(json)}</pre><button class="btn btn-sm btn-outline" style="margin-top:1rem;" onclick="navigator.clipboard.writeText(this.getAttribute('data-json'))" data-json="${escapeAttr(json)}">复制 JSON</button></div>`;
+        overlay.innerHTML = `<div class="modal-content"><button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button><h3 style="margin-top:0;">${escapeHtml(model)}</h3><pre>${escapeHtml(json)}</pre><button class="btn btn-sm btn-outline" style="margin-top:1rem;" onclick="navigator.clipboard.writeText(this.getAttribute('data-json'))" data-json="${escapeAttr(json)}">复制 JSON</button></div>`;
         document.body.appendChild(overlay);
         overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
       };
 
       window.copyAllErrors = async () => {
         const arr = [];
-        for (const [m, r] of Object.entries(state.results)) for (const [k, v] of Object.entries(r)) if (v && !v.success) arr.push(`[${m}] ${k}: ${v.error||'?'}${v.detail?' | '+v.detail:''}${v.retries?' 重试'+v.retries:''}`);
+        for (const [m, r] of Object.entries(state.results)) for (const [k, v] of Object.entries(r)) if (v && !v.success) arr.push(`[${m}] ${k}: ${v.error}${v.detail?' | '+v.detail:''}${v.retries?' 重试'+v.retries:''}`);
         if (!arr.length) return showToast('无错误');
         try { await navigator.clipboard.writeText(arr.join('\n\n')); showToast(`已复制 ${arr.length} 条错误`); } catch { showToast('复制失败'); }
       };
 
-      // 一键复制限流模型
       window.copyRateLimitedModels = async () => {
-        const limitedModels = new Set();
-        for (const [model, res] of Object.entries(state.results)) {
-          for (const key of ['nonStream', 'stream', 'toolCall']) {
-            if (res[key] && !res[key].success && isRateLimitError(res[key].error || '')) {
-              limitedModels.add(model);
-            }
-          }
-        }
-        if (limitedModels.size === 0) return showToast('没有限流模型');
-        try {
-          await navigator.clipboard.writeText([...limitedModels].join('\n'));
-          showToast(`已复制 ${limitedModels.size} 个限流模型`);
-        } catch { showToast('复制失败'); }
+        const limited = new Set();
+        for (const [model, res] of Object.entries(state.results)) for (const key of ['nonStream','stream','toolCall']) if (res[key] && !res[key].success && isRateLimitError(res[key].error)) limited.add(model);
+        if (!limited.size) return showToast('无限流模型');
+        try { await navigator.clipboard.writeText([...limited].join('\n')); showToast(`已复制 ${limited.size} 个限流模型`); } catch { showToast('复制失败'); }
       };
 
       window.exportResults = () => {
@@ -1199,13 +1026,13 @@
 
       function getTotalTokens() {
         let sum = 0;
-        for (const r of Object.values(state.results)) for (const k of ['nonStream', 'stream', 'toolCall']) if (r[k]?.usage?.total_tokens) sum += r[k].usage.total_tokens;
+        for (const r of Object.values(state.results)) for (const k of ['nonStream','stream','toolCall']) if (r[k]?.usage?.total_tokens) sum += r[k].usage.total_tokens;
         return sum;
       }
 
       function updateSummary() {
         let total = 0, pass = 0, fail = 0; const models = new Set();
-        for (const [m, r] of Object.entries(state.results)) { models.add(m); for (const k of ['nonStream', 'stream', 'toolCall']) { if (r[k]) { total++; r[k].success ? pass++ : fail++; } } }
+        for (const [m, r] of Object.entries(state.results)) { models.add(m); for (const k of ['nonStream','stream','toolCall']) { if (r[k]) { total++; r[k].success ? pass++ : fail++; } } }
         sumTotal.textContent = total; sumPass.textContent = pass; sumFail.textContent = fail;
         sumRateLimit.textContent = state.rateLimitCount; sumTokens.textContent = getTotalTokens(); sumModels.textContent = models.size;
         if (total) summaryCard.style.display = '';
