@@ -3,783 +3,346 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes, viewport-fit=cover">
-  <title>API 全能力测试 · 实际调用反馈</title>
+  <title>API 全能力监控 · nonwaste.cn</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
     :root {
-      --glass-bg: rgba(24, 24, 26, 0.55);
+      --glass-bg: rgba(20, 22, 24, 0.7);
       --glass-border: rgba(255, 255, 255, 0.08);
-      --glass-shadow: 0 12px 38px rgba(0, 0, 0, 0.35);
-      --blur: 20px;
+      --blur: 22px;
       --text-primary: #f0f0f0;
-      --text-secondary: #a0a0a0;
-      --text-muted: #707070;
+      --text-secondary: #a8a8a8;
+      --text-muted: #6a6a6a;
       --success: #6ecf8a;
       --danger: #e0676b;
       --warning: #d4a853;
       --info: #7fb7d4;
       --radius: 18px;
       --radius-sm: 10px;
-      --transition-smooth: 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
       --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-      --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      --font-mono: 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
     }
-
     body {
       font-family: var(--font-sans);
-      background: radial-gradient(circle at 30% 30%, #121215 0%, #0a0a0c 100%);
+      background: radial-gradient(circle at 25% 30%, #121418 0%, #090a0c 100%);
       background-attachment: fixed;
       color: var(--text-primary);
       min-height: 100vh;
       line-height: 1.4;
-      padding: 2rem 1.5rem;
+      padding: 1.8rem 1.5rem;
       display: flex;
       justify-content: center;
       -webkit-tap-highlight-color: transparent;
     }
-
-    .glass-panel {
+    .container {
+      max-width: 1300px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .glass {
       background: var(--glass-bg);
       backdrop-filter: blur(var(--blur));
       -webkit-backdrop-filter: blur(var(--blur));
       border: 1px solid var(--glass-border);
       border-radius: var(--radius);
-      box-shadow: var(--glass-shadow);
-      transition: box-shadow 0.4s ease, border-color 0.3s;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
     }
-
-    .glass-panel:hover {
-      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.5);
-      border-color: rgba(255, 255, 255, 0.12);
-    }
-
-    .container {
-      max-width: 1180px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 1.6rem;
-    }
-
     .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 1rem;
-      padding: 1.4rem 2rem;
-      backdrop-filter: blur(26px);
-      background: rgba(18, 18, 20, 0.5);
+      padding: 1.3rem 1.8rem;
+      backdrop-filter: blur(28px);
+      background: rgba(16, 18, 20, 0.6);
     }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 0.9rem;
-    }
-
-    .logo-mark {
-      width: 38px;
-      height: 38px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      font-size: 1.2rem;
-      font-weight: 500;
-      color: #ddd;
-    }
-
-    .logo-text h1 {
+    .logo h1 {
       font-weight: 550;
       font-size: 1.25rem;
       color: var(--text-primary);
     }
-
-    .logo-text .sub {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-      font-weight: 400;
-    }
-
-    .badge {
-      background: rgba(255, 255, 255, 0.04);
-      padding: 0.3rem 0.9rem;
-      border-radius: 20px;
+    .logo .sub {
       font-size: 0.7rem;
-      font-weight: 450;
-      color: var(--text-secondary);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-muted);
+      margin-top: 3px;
     }
-
-    .form-grid {
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #6ecf8a;
+      box-shadow: 0 0 12px #6ecf8a;
+      display: inline-block;
+      margin-right: 6px;
+      animation: pulse-green 2s infinite;
+    }
+    @keyframes pulse-green {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+    .clock {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+    .grid-2col {
       display: grid;
-      grid-template-columns: 2fr 2fr auto;
-      gap: 1.2rem;
-      align-items: end;
-      padding: 1.8rem 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
     }
-
-    @media (max-width: 700px) {
-      .form-grid { grid-template-columns: 1fr; }
+    .card {
+      padding: 1.2rem;
     }
-
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-    }
-
-    .input-group label {
-      font-size: 0.72rem;
-      font-weight: 500;
-      color: var(--text-secondary);
+    .card-title {
+      font-weight: 550;
+      font-size: 0.85rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-left: 2px;
-    }
-
-    .input-field {
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 12px;
-      padding: 0.8rem 1rem;
-      font-size: 0.88rem;
-      color: #eee;
-      font-family: var(--font-mono);
-      transition: all var(--transition-smooth);
-      backdrop-filter: blur(6px);
-      width: 100%;
-    }
-
-    .input-field:focus {
-      outline: none;
-      border-color: rgba(255, 255, 255, 0.5);
-      box-shadow: 0 0 16px rgba(255, 255, 255, 0.05);
-    }
-
-    .btn {
-      padding: 0.7rem 1.3rem;
-      border-radius: 12px;
-      font-weight: 500;
-      font-size: 0.82rem;
-      cursor: pointer;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(255, 255, 255, 0.06);
-      backdrop-filter: blur(12px);
-      color: #e0e0e0;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      transition: all var(--transition-smooth);
-      letter-spacing: 0.2px;
-      white-space: nowrap;
-      font-family: inherit;
-      line-height: 1;
-    }
-
-    .btn-primary {
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(255, 255, 255, 0.25);
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: rgba(255, 255, 255, 0.22);
-      border-color: rgba(255, 255, 255, 0.4);
-      transform: translateY(-1px);
-      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
-    }
-
-    .btn:active:not(:disabled) { transform: scale(0.98); }
-    .btn:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(20%); }
-    .btn-outline { background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); }
-    .btn-outline:hover:not(:disabled) { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.45); }
-    .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.74rem; border-radius: 8px; }
-
-    .model-cloud {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.55rem;
-      padding: 1rem 2rem;
-      max-height: 210px;
-      overflow-y: auto;
-    }
-
-    .model-tag {
-      padding: 0.4rem 0.9rem;
-      border-radius: 16px;
-      font-size: 0.78rem;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      color: #bbb;
-      cursor: pointer;
+      color: var(--text-secondary);
+      margin-bottom: 0.9rem;
       display: flex;
       align-items: center;
       gap: 0.4rem;
-      transition: 0.2s;
-      user-select: none;
     }
-
-    .model-tag.selected {
-      background: rgba(255, 255, 255, 0.14);
-      border-color: rgba(255, 255, 255, 0.4);
-      color: #fff;
-    }
-
-    .model-tag .dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #555;
-    }
-
-    .model-tag.selected .dot { background: #ddd; }
-
-    .action-row {
+    .stat-row {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.8rem 2rem;
       flex-wrap: wrap;
       gap: 1rem;
     }
-
-    .progress-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
+    .stat-item {
       flex: 1;
-      min-width: 180px;
-    }
-
-    .progress-bar {
-      height: 5px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #7a7a7a, #c0c0c0);
-      border-radius: 8px;
-      width: 0%;
-      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-    }
-
-    .progress-fill::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-      animation: shimmer 2s infinite;
-    }
-
-    @keyframes shimmer {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
-    }
-
-    .progress-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      gap: 1rem;
-    }
-
-    .live-indicator {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: rgba(255,255,255,0.04);
-      padding: 0.3rem 0.9rem;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .live-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 0 10px #fff;
-      animation: breathe 1.2s ease-in-out infinite;
-    }
-
-    @keyframes breathe {
-      0%,100% { opacity: 0.4; transform: scale(0.9); }
-      50% { opacity: 1; transform: scale(1.3); }
-    }
-
-    .live-text {
-      font-size: 0.78rem;
-      color: #ddd;
-      max-width: 220px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
-      gap: 0.8rem;
-      padding: 1rem 2rem;
-    }
-
-    .stat-card {
       background: rgba(255,255,255,0.03);
-      backdrop-filter: blur(6px);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 14px;
-      padding: 0.9rem 0.6rem;
+      border-radius: 12px;
+      padding: 0.8rem;
       text-align: center;
     }
-
     .stat-value {
-      font-size: 1.7rem;
+      font-size: 1.8rem;
       font-weight: 600;
       color: #ddd;
-      line-height: 1;
     }
-
     .stat-label {
       font-size: 0.65rem;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
       color: var(--text-muted);
       margin-top: 4px;
     }
-
-    .table-container {
+    .model-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+    .model-chip {
+      padding: 0.25rem 0.8rem;
+      border-radius: 16px;
+      font-size: 0.7rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #bbb;
+    }
+    .model-chip.failed {
+      border-color: rgba(224,103,107,0.4);
+      color: #e88488;
+    }
+    .model-chip.excluded {
+      border-color: rgba(212,168,83,0.5);
+      color: #dbb862;
+      text-decoration: line-through;
+    }
+    .table-wrap {
       overflow-x: auto;
-      padding: 1rem 2rem;
+      padding: 0.8rem 1.5rem;
       -webkit-overflow-scrolling: touch;
     }
-
-    .results-table {
+    table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
     }
-
-    .results-table th {
+    th {
       text-align: left;
-      padding: 0.7rem 0.8rem;
+      padding: 0.6rem 0.7rem;
       font-weight: 500;
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       text-transform: uppercase;
       color: #888;
       border-bottom: 1px solid rgba(255,255,255,0.08);
       background: rgba(0,0,0,0.2);
     }
-
-    .results-table td {
-      padding: 0.7rem 0.8rem;
+    td {
+      padding: 0.6rem 0.7rem;
       border-bottom: 1px solid rgba(255,255,255,0.04);
       color: #ccc;
-      vertical-align: middle;
     }
-
-    .results-table tbody tr { transition: background 0.2s; }
-    .results-table tbody tr:hover { background: rgba(255,255,255,0.02); }
-
-    .model-name-cell {
-      font-weight: 500;
-      color: #eee;
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 0.15rem 0.6rem;
-      border-radius: 16px;
-      font-size: 0.68rem;
+    .badge {
+      display: inline-block;
+      padding: 0.1rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.65rem;
       font-weight: 500;
       background: rgba(255,255,255,0.06);
     }
-
-    .status-pass { background: rgba(110,207,138,0.12); color: #8fdda0; }
-    .status-fail { background: rgba(224,103,107,0.15); color: #e88488; }
-    .status-limit { background: rgba(212,168,83,0.15); color: #dbb862; border: 1px solid rgba(212,168,83,0.3); }
-    .status-warn { background: rgba(212,168,83,0.1); color: #dbb862; }
-
-    .clickable {
-      cursor: pointer;
-      color: #aaa;
-      transition: color 0.2s;
-      font-size: 0.9rem;
-    }
-
+    .badge.pass { background: rgba(110,207,138,0.15); color: #8fdda0; }
+    .badge.fail { background: rgba(224,103,107,0.15); color: #e88488; }
+    .badge.limit { background: rgba(212,168,83,0.2); color: #dbb862; }
+    .badge.warn { background: rgba(212,168,83,0.1); color: #dbb862; }
+    .clickable { cursor: pointer; color: #aaa; }
     .clickable:hover { color: #fff; }
-
-    .copy-err-btn {
-      background: none;
-      border: 1px solid rgba(255,255,255,0.18);
-      color: #999;
-      padding: 1px 5px;
-      border-radius: 5px;
-      font-size: 0.6rem;
+    .small-text { font-size: 0.65rem; color: #888; }
+    .time-info {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: #aaa;
+      margin-left: 0.5rem;
+    }
+    .btn {
+      padding: 0.4rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      font-weight: 500;
       cursor: pointer;
-      margin-left: 4px;
-      transition: all 0.2s;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.05);
+      color: #ddd;
+      backdrop-filter: blur(10px);
+      transition: 0.2s;
     }
-
-    .copy-err-btn:hover { background: rgba(255,255,255,0.08); color: #ddd; }
-
-    .token-info {
-      font-size: 0.62rem;
-      color: #888;
-      margin-left: 4px;
-    }
-
-    .retry-info {
-      font-size: 0.6rem;
-      color: #c9a84b;
-      margin-left: 2px;
-    }
-
-    .error-hint {
-      font-size: 0.62rem;
-      color: #c97272;
-      margin-left: 4px;
-      max-width: 120px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      display: inline-block;
-      vertical-align: middle;
-      cursor: default;
-    }
-
-    /* 回复预览 */
-    .reply-preview {
-      font-size: 0.62rem;
-      color: #999;
-      margin-left: 4px;
-      max-width: 140px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      display: inline-block;
-      vertical-align: middle;
-      border-left: 1px solid rgba(255,255,255,0.15);
-      padding-left: 6px;
-    }
-
-    .tool-preview {
-      font-size: 0.62rem;
-      color: #b0b0b0;
-      margin-left: 4px;
-      max-width: 130px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      display: inline-block;
-      vertical-align: middle;
-    }
-
-    @media (max-width: 750px) {
-      .table-container { padding: 0.8rem; }
-      .results-table thead { display: none; }
-      .results-table, .results-table tbody, .results-table tr, .results-table td {
-        display: block; width: 100%;
-      }
-      .results-table tr {
-        margin-bottom: 1rem;
-        background: rgba(255,255,255,0.02);
-        border-radius: 14px;
-        padding: 0.8rem 0.7rem;
-        border: 1px solid rgba(255,255,255,0.05);
-      }
-      .results-table td {
-        border-bottom: none;
-        padding: 0.3rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.76rem;
-      }
-      .results-table td::before {
-        content: attr(data-label);
-        font-weight: 500;
-        color: #888;
-        text-transform: uppercase;
-        font-size: 0.62rem;
-        letter-spacing: 0.4px;
-        margin-right: 0.8rem;
-      }
-      .model-name-cell { font-size: 0.85rem; font-weight: 550; justify-content: flex-start; }
-      .model-name-cell::before { display: none; }
-    }
-
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 1000; animation: fadeIn 0.2s ease;
-    }
-
-    .modal-content {
-      background: rgba(26,26,28,0.9); backdrop-filter: blur(24px);
-      border: 1px solid rgba(255,255,255,0.15); border-radius: 20px;
-      padding: 1.8rem; max-width: 680px; width: 92%; max-height: 82vh;
-      overflow-y: auto; color: #ddd; box-shadow: 0 28px 60px rgba(0,0,0,0.7);
-    }
-
-    .modal-content pre {
-      background: rgba(0,0,0,0.5); padding: 1rem; border-radius: 12px;
-      font-size: 0.7rem; overflow-x: auto; white-space: pre-wrap;
-      word-break: break-all; font-family: var(--font-mono); color: #bbb;
-    }
-
-    .modal-close {
-      float: right; background: none; border: none; color: #888;
-      font-size: 1.4rem; cursor: pointer;
-    }
-
-    .modal-close:hover { color: #fff; }
-
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-    .spinner {
-      width: 16px; height: 16px;
-      border: 2px solid rgba(255,255,255,0.2); border-top-color: #ccc;
-      border-radius: 50%; animation: spin 0.6s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
+    .btn:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.4); }
     .toast-area {
-      position: fixed; top: 1.5rem; right: 1.5rem; z-index: 2000;
-      display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none;
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
     }
-
     .toast {
-      padding: 0.7rem 1.2rem; border-radius: 10px;
-      background: rgba(22,22,24,0.85); backdrop-filter: blur(15px);
-      border: 1px solid rgba(255,255,255,0.1); color: #ddd;
-      font-size: 0.78rem; font-weight: 450;
-      animation: toastIn 0.35s ease, toastOut 0.3s 2.8s forwards;
-      pointer-events: auto;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      background: rgba(22,22,24,0.9);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #ddd;
+      font-size: 0.75rem;
+      animation: toastIn 0.3s ease, toastOut 0.3s 2.5s forwards;
     }
-
     @keyframes toastIn {
       from { opacity: 0; transform: translateX(60px); }
       to { opacity: 1; transform: translateX(0); }
     }
-
     @keyframes toastOut {
       to { opacity: 0; transform: translateY(-8px); }
     }
-
-    .hint {
-      font-size: 0.65rem; color: #5a5a5a;
-      padding: 0.2rem 2rem 0.6rem;
+    @media (max-width: 700px) {
+      .header { padding: 1rem; }
+      .table-wrap { padding: 0.5rem; }
+      .stat-row { flex-direction: column; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="glass-panel header">
+    <!-- Header -->
+    <div class="glass header">
       <div class="logo">
-        <div class="logo-mark"><span>&#x25C7;</span></div>
-        <div class="logo-text">
-          <h1>API 全能力测试</h1>
-          <div class="sub">非流式 · 流式 · 工具调用 · 真实反馈</div>
-        </div>
+        <h1><span class="status-dot"></span> API 全能力监控</h1>
+        <div class="sub">https://nonwaste.cn/v1 · 全自动定时测试</div>
       </div>
-      <div class="badge">OpenAI 兼容 · 限流感知</div>
+      <div class="clock" id="liveClock">--</div>
     </div>
 
-    <div class="glass-panel">
-      <div class="form-grid">
-        <div class="input-group">
-          <label>API Base URL</label>
-          <input class="input-field" id="apiUrl" placeholder="https://api.openai.com/v1" value="https://api.openai.com/v1">
-        </div>
-        <div class="input-group">
-          <label>API Key</label>
-          <input class="input-field" type="password" id="apiKey" placeholder="sk-...">
-        </div>
-        <button class="btn btn-primary" id="btnFetchModels" onclick="fetchModels()">获取模型</button>
-      </div>
-    </div>
-
-    <div class="glass-panel" id="modelsCard" style="display:none;">
-      <div class="action-row">
-        <span style="font-weight:500;color:#ccc;font-size:0.88rem;" id="modelCountLabel">模型列表</span>
-        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-          <button class="btn btn-outline btn-sm" onclick="selectAllModels()">全选</button>
-          <button class="btn btn-outline btn-sm" onclick="deselectAllModels()">清空</button>
-          <button class="btn btn-outline btn-sm" onclick="invertSelection()">反选</button>
+    <!-- 计划与状态 -->
+    <div class="grid-2col">
+      <div class="glass card">
+        <div class="card-title">⏱ 任务调度</div>
+        <div style="display:flex; flex-direction: column; gap:0.6rem; font-size:0.8rem;">
+          <div><span class="small-text">下次全量测试</span> <span id="nextFullTest" class="time-info">计算中...</span></div>
+          <div><span class="small-text">下次刷新模型</span> <span id="nextModelRefresh" class="time-info">计算中...</span></div>
+          <div><span class="small-text">待重试模型</span> <span id="retryQueueCount" class="time-info">0</span></div>
+          <div><span class="small-text">今日排除模型</span> <span id="excludedCount" class="time-info">0</span></div>
         </div>
       </div>
-      <div class="model-cloud" id="modelsContainer"></div>
-    </div>
-
-    <div class="glass-panel" id="testControlCard" style="display:none;">
-      <div class="action-row">
-        <div class="progress-wrap">
-          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-          <div class="progress-meta">
-            <span class="progress-label" id="progressLabel">就绪</span>
-            <div class="live-indicator" id="liveIndicator" style="opacity:0;">
-              <span class="live-dot"></span>
-              <span class="live-text" id="liveText">等待开始</span>
-            </div>
-          </div>
+      <div class="glass card">
+        <div class="card-title">📊 最近测试汇总</div>
+        <div class="stat-row" id="summaryStats">
+          <div class="stat-item"><div class="stat-value" id="sumTotal">0</div><div class="stat-label">总计</div></div>
+          <div class="stat-item"><div class="stat-value" id="sumPass" style="color:#8fdda0;">0</div><div class="stat-label">通过</div></div>
+          <div class="stat-item"><div class="stat-value" id="sumFail" style="color:#e88488;">0</div><div class="stat-label">失败</div></div>
+          <div class="stat-item"><div class="stat-value" id="sumLimit" style="color:#dbb862;">0</div><div class="stat-label">限流</div></div>
         </div>
-        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-          <button class="btn btn-primary" id="btnStart" onclick="startAllTests()">开始测试</button>
-          <button class="btn btn-outline btn-sm" id="btnStop" onclick="stopAllTests()" disabled>停止</button>
-          <button class="btn btn-outline btn-sm" onclick="clearResults()">清除</button>
-        </div>
-      </div>
-      <div style="padding:0.5rem 2rem;display:flex;gap:1.5rem;font-size:0.75rem;color:#aaa;flex-wrap:wrap;align-items:center;">
-        <span>超时 <input class="input-field" id="timeoutSec" type="number" value="60" min="10" style="width:55px;padding:0.3rem;text-align:center;"> s</span>
-        <span>并发 <input class="input-field" id="concurrency" type="number" value="2" min="1" max="6" style="width:45px;padding:0.3rem;text-align:center;"></span>
-        <span>间隔 <input class="input-field" id="requestInterval" type="number" value="800" min="200" max="5000" style="width:60px;padding:0.3rem;text-align:center;"> ms</span>
-        <span>重试 <input class="input-field" id="maxRetries" type="number" value="3" min="0" max="5" style="width:40px;padding:0.3rem;text-align:center;"></span>
-      </div>
-      <div class="hint">指数退避 · 速率控制 · 实时反馈 · 回复预览</div>
-    </div>
-
-    <div class="glass-panel" id="summaryCard" style="display:none;">
-      <div class="action-row" style="padding-bottom:0;">
-        <span style="color:#ccc;font-weight:500;font-size:0.9rem;">测试汇总</span>
-        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-          <button class="btn btn-outline btn-sm" onclick="copyAllErrors()">复制错误</button>
-          <button class="btn btn-outline btn-sm" onclick="copyRateLimitedModels()">复制限流模型</button>
-          <button class="btn btn-outline btn-sm" onclick="exportResults()">导出 JSON</button>
-        </div>
-      </div>
-      <div class="stats-grid">
-        <div class="stat-card"><div class="stat-value" id="sumTotal">0</div><div class="stat-label">总计</div></div>
-        <div class="stat-card"><div class="stat-value" id="sumPass" style="color:#8fdda0;">0</div><div class="stat-label">通过</div></div>
-        <div class="stat-card"><div class="stat-value" id="sumFail" style="color:#e88488;">0</div><div class="stat-label">失败</div></div>
-        <div class="stat-card"><div class="stat-value" id="sumRateLimit" style="color:#dbb862;">0</div><div class="stat-label">限流</div></div>
-        <div class="stat-card"><div class="stat-value" id="sumTokens" style="color:#9ac4da;">0</div><div class="stat-label">Tokens</div></div>
-        <div class="stat-card"><div class="stat-value" id="sumModels" style="color:#eee;">0</div><div class="stat-label">模型</div></div>
       </div>
     </div>
 
-    <div class="glass-panel" id="resultsCard" style="display:none;">
-      <div class="table-container">
-        <table class="results-table">
+    <!-- 模型状态 -->
+    <div class="glass card">
+      <div class="card-title">🔬 模型状态（红色=有失败，黄色=今日排除）</div>
+      <div class="model-list" id="modelStatusList"></div>
+    </div>
+
+    <!-- 结果表格 -->
+    <div class="glass">
+      <div class="table-wrap">
+        <table>
           <thead>
-            <tr>
-              <th>模型</th>
-              <th>非流式</th>
-              <th>耗时</th>
-              <th>流式</th>
-              <th>首字节</th>
-              <th>总耗时</th>
-              <th>工具调用</th>
-              <th>耗时</th>
-              <th>详情</th>
-            </tr>
+            <tr><th>模型</th><th>非流式</th><th>耗时</th><th>流式</th><th>首字节</th><th>总耗时</th><th>工具调用</th><th>耗时</th><th>详情</th></tr>
           </thead>
-          <tbody id="resultsBody"></tbody>
+          <tbody id="resultsBody"><tr><td colspan="9" style="text-align:center;color:#555;">等待首次测试...</td></tr></tbody>
         </table>
       </div>
     </div>
   </div>
-
   <div class="toast-area" id="toastArea"></div>
 
   <script>
     (function() {
+      // 固定配置
+      const API_BASE = 'https://nonwaste.cn/v1';
+      const API_KEY = 'sk-gdl1Y5dVRU2CtPD1wigccNgN9MYcB26FKVKFODXN6fiDwAEX';
+      const BASE_HOUR = 4; // 每日基准时间 4:00
+
+      // 全局状态
       const state = {
-        models: [],
-        results: {},
-        running: false,
-        totalTests: 0,
-        completed: 0,
-        globalLastRequestTime: 0,
+        models: [],                  // [{id}]
+        results: {},                // {modelId: {nonStream, stream, toolCall}}
+        modelStatus: {},            // {modelId: {consecutiveFails:0, excluded:false, retryTimer:null}}
+        isRunning: false,
+        fullTestTimer: null,
+        modelRefreshTimer: null,
+        lastFullTest: null,
         rateLimitCount: 0,
-        currentTest: { model: null, type: null }
       };
 
+      // DOM 元素
       const $ = (s) => document.querySelector(s);
-      const apiUrlInp = $('#apiUrl');
-      const apiKeyInp = $('#apiKey');
-      const modelsCard = $('#modelsCard');
-      const modelsContainer = $('#modelsContainer');
-      const testControlCard = $('#testControlCard');
-      const progressFill = $('#progressFill');
-      const progressLabel = $('#progressLabel');
-      const btnStart = $('#btnStart');
-      const btnStop = $('#btnStop');
-      const summaryCard = $('#summaryCard');
-      const resultsCard = $('#resultsCard');
+      const liveClock = $('#liveClock');
+      const nextFullTestEl = $('#nextFullTest');
+      const nextModelRefreshEl = $('#nextModelRefresh');
+      const retryQueueCountEl = $('#retryQueueCount');
+      const excludedCountEl = $('#excludedCount');
+      const modelStatusList = $('#modelStatusList');
       const resultsBody = $('#resultsBody');
       const sumTotal = $('#sumTotal');
       const sumPass = $('#sumPass');
       const sumFail = $('#sumFail');
-      const sumRateLimit = $('#sumRateLimit');
-      const sumTokens = $('#sumTokens');
-      const sumModels = $('#sumModels');
+      const sumLimit = $('#sumLimit');
       const toastArea = $('#toastArea');
-      const timeoutSecInp = $('#timeoutSec');
-      const concurrencyInp = $('#concurrency');
-      const requestIntervalInp = $('#requestInterval');
-      const maxRetriesInp = $('#maxRetries');
-      const liveIndicator = $('#liveIndicator');
-      const liveText = $('#liveText');
-
-      function setCurrentTest(model, type) {
-        state.currentTest = { model, type };
-        if (model && type && state.running) {
-          liveText.textContent = `${model} · ${type}`;
-          liveIndicator.style.opacity = '1';
-        } else if (!state.running) liveIndicator.style.opacity = '0';
-      }
 
       function showToast(msg) {
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.textContent = msg;
-        toastArea.appendChild(toast);
-        setTimeout(() => toast.remove(), 3200);
-      }
-
-      function normalizeUrl(url) {
-        let u = url.trim().replace(/\/+$/, '');
-        if (!u.endsWith('/v1')) u += '/v1';
-        return u;
-      }
-
-      function escapeHtml(str) {
-        const div = document.createElement('div');
-        div.textContent = str || '';
-        return div.innerHTML;
-      }
-
-      function escapeAttr(str) {
-        return (str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      }
-
-      function cssEscape(str) {
-        if (typeof CSS !== 'undefined' && CSS.escape) return CSS.escape(str);
-        return ('' + str).replace(/[^a-zA-Z0-9\-_]/g, c => '\\' + c.charCodeAt(0).toString(16).padStart(6, '0'));
+        const t = document.createElement('div');
+        t.className = 'toast';
+        t.textContent = msg;
+        toastArea.appendChild(t);
+        setTimeout(() => t.remove(), 2800);
       }
 
       function formatTime(ms) {
@@ -787,328 +350,387 @@
         return ms < 1000 ? Math.round(ms) + 'ms' : (ms / 1000).toFixed(1) + 's';
       }
 
-      function isRateLimitError(msg) { return /429|rate.?limit|too.?many/i.test(msg || ''); }
-      function isRetryableError(msg, code) {
-        if (code === 429 || code === 503 || code === 502) return true;
-        return /429|503|502|rate.?limit|too.?many/i.test(msg || '');
+      function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s||''; return d.innerHTML; }
+
+      // 时钟与计划时间显示
+      function updateClock() {
+        const now = new Date();
+        liveClock.textContent = now.toLocaleTimeString('zh-CN', { hour12: false });
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      // 计算下一个触发时间（分钟为周期，基准小时从BASE_HOUR开始）
+      function nextTriggerTime(minutesInterval, baseHour = BASE_HOUR) {
+        const now = new Date();
+        const msInterval = minutesInterval * 60 * 1000;
+        // 找到从baseHour开始到今天凌晨baseHour的基准时间
+        const base = new Date(now);
+        base.setHours(baseHour, 0, 0, 0);
+        // 如果现在已经过了今天的基准时间，基准就是今天，否则是昨天
+        if (now < base) base.setDate(base.getDate() - 1);
+        // 计算从base到现在的毫秒数，找到下一个整周期时间点
+        const elapsed = now.getTime() - base.getTime();
+        const next = base.getTime() + Math.ceil(elapsed / msInterval) * msInterval;
+        return new Date(next);
       }
 
-      async function waitForRateLimit() {
-        if (!state.running) return;
-        const interval = parseInt(requestIntervalInp.value) || 800;
-        const now = Date.now();
-        const elapsed = now - state.globalLastRequestTime;
-        if (elapsed < interval && state.globalLastRequestTime > 0)
-          await new Promise(r => setTimeout(r, interval - elapsed));
-        state.globalLastRequestTime = Date.now();
+      function formatNextTime(date) {
+        if (!date) return '--';
+        return date.toLocaleTimeString('zh-CN', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }) +
+               ' (' + Math.round((date - new Date()) / 60000) + '分钟后)';
       }
 
-      async function fetchWithTimeout(url, options, sec) {
-        const ctrl = new AbortController();
-        const timer = setTimeout(() => ctrl.abort(), sec * 1000);
-        try {
-          const resp = await fetch(url, { ...options, signal: ctrl.signal });
-          clearTimeout(timer);
-          return resp;
-        } catch (e) {
-          clearTimeout(timer);
-          throw e.name === 'AbortError' ? new Error('超时(' + sec + 's)') : e;
+      function updateScheduleDisplay() {
+        const now = new Date();
+        const nextFull = nextTriggerTime(60, BASE_HOUR);
+        const nextRefresh = nextTriggerTime(30, BASE_HOUR);
+        nextFullTestEl.textContent = formatNextTime(nextFull);
+        nextModelRefreshEl.textContent = formatNextTime(nextRefresh);
+        // 统计待重试和排除数量
+        let retryCount = 0, excludedCount = 0;
+        Object.values(state.modelStatus).forEach(s => {
+          if (s.retryTimer) retryCount++;
+          if (s.excluded) excludedCount++;
+        });
+        retryQueueCountEl.textContent = retryCount;
+        excludedCountEl.textContent = excludedCount;
+        // 更新模型状态列表
+        renderModelStatus();
+      }
+
+      // 渲染模型状态标签
+      function renderModelStatus() {
+        if (!state.models.length) {
+          modelStatusList.innerHTML = '<span class="small-text">暂无模型</span>';
+          return;
         }
+        modelStatusList.innerHTML = state.models.map(m => {
+          const status = state.modelStatus[m.id] || {};
+          let cls = '';
+          if (status.excluded) cls = 'excluded';
+          else if (status.consecutiveFails > 0) cls = 'failed';
+          return `<span class="model-chip ${cls}" title="连续失败:${status.consecutiveFails||0} 排除:${status.excluded?'是':'否'}">${escapeHtml(m.id)}</span>`;
+        }).join('');
       }
 
-      async function callWithRetry(fn, maxRetries) {
-        let last = null, detailAcc = '';
-        for (let i = 0; i <= maxRetries; i++) {
-          if (!state.running && i > 0) return { success: false, elapsed: 0, error: '已停止', retries: i };
-          if (i > 0) {
-            const delay = Math.min(1000 * Math.pow(2, i - 1), 28000) + Math.random() * 400;
-            await new Promise(r => setTimeout(r, delay));
-            if (!state.running) return { success: false, elapsed: 0, error: '已停止', retries: i };
-          }
-          try {
-            const res = await fn();
-            if (res.success) return { ...res, retries: i };
-            const code = (res.error || '').match(/^(\d{3})/);
-            const codeNum = code ? parseInt(code[1]) : null;
-            if (isRetryableError(res.error, codeNum) && i < maxRetries) {
-              if (isRateLimitError(res.error)) state.rateLimitCount++;
-              detailAcc = res.detail || detailAcc;
-              last = res;
-              continue;
-            }
-            return { ...res, retries: i, detail: res.detail || detailAcc };
-          } catch (e) {
-            if (isRetryableError(e.message, null) && i < maxRetries) {
-              if (isRateLimitError(e.message)) state.rateLimitCount++;
-              last = { success: false, error: e.message };
-              continue;
-            }
-            return { success: false, elapsed: 0, error: e.message, retries: i };
-          }
-        }
-        return { success: false, elapsed: last?.elapsed || 0, error: (last?.error || '?') + ` (重试${maxRetries}次)`, detail: detailAcc, retries: maxRetries };
-      }
-
-      async function callNonStream(base, key, model, timeout, retries) {
-        setCurrentTest(model, '非流式');
-        return callWithRetry(async () => {
-          await waitForRateLimit();
-          const t0 = performance.now();
-          const resp = await fetchWithTimeout(base + '/chat/completions', {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ model, messages: [{ role: 'user', content: '你好，用一句话介绍自己。' }], stream: false, max_tokens: 100 })
-          }, timeout);
-          const elapsed = performance.now() - t0;
-          if (!resp.ok) {
-            const txt = await resp.text().catch(() => '');
-            return { success: false, elapsed, error: `${resp.status}`, detail: txt };
-          }
-          const data = await resp.json();
-          return { success: true, elapsed, content: data.choices?.[0]?.message?.content, usage: data.usage || null };
-        }, retries);
-      }
-
-      async function callStream(base, key, model, timeout, retries) {
-        setCurrentTest(model, '流式');
-        const doStream = async (withUsage) => {
-          await waitForRateLimit();
-          const t0 = performance.now();
-          let firstByte = null, content = '', chunks = 0, usage = null;
-          const body = { model, messages: [{ role: 'user', content: '一句话介绍人工智能。' }], stream: true, max_tokens: 100 };
-          if (withUsage) body.stream_options = { include_usage: true };
-          const resp = await fetchWithTimeout(base + '/chat/completions', {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-          }, timeout);
-          if (!resp.ok) {
-            const txt = await resp.text().catch(() => '');
-            const err = new Error(`${resp.status}`);
-            err.status = resp.status; err.detail = txt; err.isHttp = true;
-            throw err;
-          }
-          const reader = resp.body.getReader();
-          const decoder = new TextDecoder();
-          let buffer = '';
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            if (!firstByte) firstByte = performance.now() - t0;
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split('\n');
-            buffer = lines.pop();
-            for (const line of lines) {
-              if (!line.startsWith('data:')) continue;
-              const d = line.slice(5).trim();
-              if (d === '[DONE]') continue;
-              try { const j = JSON.parse(d); if (j.usage) usage = j.usage; const c = j.choices?.[0]?.delta?.content; if (c) content += c; chunks++; } catch {}
-            }
-          }
-          return { success: true, elapsed: performance.now() - t0, firstByte, content, chunks, usage };
-        };
-        return callWithRetry(async () => {
-          try { return await doStream(true); } catch (e) {
-            if (e.isHttp && (e.status === 400 || e.status === 404 || e.status === 501)) {
-              try { return await doStream(false); } catch (e2) {
-                return { success: false, elapsed: 0, error: e2.isHttp ? `${e2.status}` : e2.message, detail: e2.detail || '' };
+      // 更新汇总统计
+      function updateSummary() {
+        let total = 0, pass = 0, fail = 0, limitCount = 0;
+        for (const r of Object.values(state.results)) {
+          for (const key of ['nonStream','stream','toolCall']) {
+            if (r[key]) {
+              total++;
+              if (r[key].success) pass++;
+              else {
+                fail++;
+                if (isRateLimitError(r[key].error)) limitCount++;
               }
             }
-            return { success: false, elapsed: 0, error: e.isHttp ? `${e.status}` : e.message, detail: e.detail || '' };
           }
-        }, retries);
+        }
+        sumTotal.textContent = total;
+        sumPass.textContent = pass;
+        sumFail.textContent = fail;
+        sumLimit.textContent = limitCount;
       }
 
-      async function callTool(base, key, model, timeout, retries) {
-        setCurrentTest(model, '工具调用');
-        return callWithRetry(async () => {
-          await waitForRateLimit();
-          const t0 = performance.now();
-          const resp = await fetchWithTimeout(base + '/chat/completions', {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ model, messages: [{ role: 'user', content: '北京天气如何？' }], tools: [{ type: 'function', function: { name: 'get_weather', parameters: { type: 'object', properties: { city: { type: 'string' } }, required: ['city'] } } }], tool_choice: 'auto', stream: false })
-          }, timeout);
-          const elapsed = performance.now() - t0;
-          if (!resp.ok) {
-            const txt = await resp.text().catch(() => '');
-            return { success: false, elapsed, error: `${resp.status}`, detail: txt };
-          }
-          const data = await resp.json();
-          const toolCalls = data.choices?.[0]?.message?.tool_calls;
-          return { success: true, elapsed, hasTools: !!toolCalls, toolCalls, usage: data.usage || null, content: data.choices?.[0]?.message?.content };
-        }, retries);
+      function isRateLimitError(msg) { return /429|rate.?limit|too.?many/i.test(msg||''); }
+
+      // 渲染结果表格
+      function renderResultsTable() {
+        if (!Object.keys(state.results).length) {
+          resultsBody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#555;">暂无测试结果</td></tr>';
+          return;
+        }
+        const models = Object.keys(state.results).sort();
+        resultsBody.innerHTML = models.map(model => {
+          const r = state.results[model];
+          const n = r.nonStream || {}, s = r.stream || {}, t = r.toolCall || {};
+          const nonHtml = n.success ? '<span class="badge pass">通过</span>' : (isRateLimitError(n.error) ? '<span class="badge limit">限流</span>' : '<span class="badge fail">失败</span>');
+          const strHtml = s.success ? '<span class="badge pass">通过</span>' : (isRateLimitError(s.error) ? '<span class="badge limit">限流</span>' : '<span class="badge fail">失败</span>');
+          const toolHtml = t.success ? (t.hasTools ? '<span class="badge pass">已调用</span>' : '<span class="badge warn">未调用</span>') : (isRateLimitError(t.error) ? '<span class="badge limit">限流</span>' : '<span class="badge fail">失败</span>');
+          return `<tr>
+            <td>${escapeHtml(model)}</td>
+            <td>${nonHtml}</td><td>${formatTime(n.elapsed)}</td>
+            <td>${strHtml}</td><td>${formatTime(s.firstByte)}</td><td>${formatTime(s.elapsed)}</td>
+            <td>${toolHtml}</td><td>${formatTime(t.elapsed)}</td>
+            <td><span class="clickable" onclick="showDetail('${escapeHtml(model)}')">详情</span></td>
+          </tr>`;
+        }).join('');
       }
-
-      function tokenLabel(usage) {
-        if (!usage || usage.total_tokens == null) return '';
-        return `<span class="token-info" title="共${usage.total_tokens} 提示${usage.prompt_tokens??'?'} 生成${usage.completion_tokens??'?'}">${usage.total_tokens} tk</span>`;
-      }
-
-      function retryLabel(n) { return n ? `<span class="retry-info">&#x21bb;${n}</span>` : ''; }
-
-      function errorHint(err) {
-        if (!err) return '';
-        const short = err.split(' ')[0] || err;
-        return `<span class="error-hint" title="${escapeHtml(err)}">${escapeHtml(short.substring(0, 20))}</span>`;
-      }
-
-      function replyPreview(content) {
-        if (!content) return '';
-        const preview = content.replace(/\s+/g, ' ').substring(0, 30);
-        return `<span class="reply-preview" title="${escapeHtml(content)}">${escapeHtml(preview)}…</span>`;
-      }
-
-      function toolPreview(toolCalls) {
-        if (!toolCalls || !toolCalls.length) return '';
-        const name = toolCalls[0]?.function?.name || 'tool';
-        let args = '';
-        try { args = JSON.stringify(JSON.parse(toolCalls[0]?.function?.arguments || '{}')); } catch { args = toolCalls[0]?.function?.arguments || ''; }
-        return `<span class="tool-preview" title="${escapeHtml(args)}">${escapeHtml(name)}(${escapeHtml(args).substring(0, 20)})</span>`;
-      }
-
-      function renderRow(model, res) {
-        const n = res.nonStream || {}, s = res.stream || {}, t = res.toolCall || {};
-        const esc = escapeAttr(model), css = cssEscape(model);
-        const nonLimited = !n.success && isRateLimitError(n.error);
-        const non = n.success ?
-          `<span class="status-badge status-pass">通过</span>${tokenLabel(n.usage)}${replyPreview(n.content)}${retryLabel(n.retries)}` :
-          `${nonLimited ? '<span class="status-badge status-limit">限流</span>' : '<span class="status-badge status-fail">失败</span>'}${errorHint(n.error)}<button class="copy-err-btn" onclick="event.stopPropagation();copyText('${escapeAttr(n.error+(n.detail?' | '+n.detail:''))}')">复制</button>`;
-
-        const strLimited = !s.success && isRateLimitError(s.error);
-        const str = s.success ?
-          `<span class="status-badge status-pass">通过</span>${tokenLabel(s.usage)}${replyPreview(s.content)}${retryLabel(s.retries)}` :
-          `${strLimited ? '<span class="status-badge status-limit">限流</span>' : '<span class="status-badge status-fail">失败</span>'}${errorHint(s.error)}<button class="copy-err-btn" onclick="event.stopPropagation();copyText('${escapeAttr(s.error+(s.detail?' | '+s.detail:''))}')">复制</button>`;
-
-        const toolLimited = !t.success && isRateLimitError(t.error);
-        const tool = t.success ?
-          (t.hasTools ? `<span class="status-badge status-pass">已调用</span>${toolPreview(t.toolCalls)}` : '<span class="status-badge status-warn">未调用</span>') + tokenLabel(t.usage) + retryLabel(t.retries) :
-          `${toolLimited ? '<span class="status-badge status-limit">限流</span>' : '<span class="status-badge status-fail">失败</span>'}${errorHint(t.error)}<button class="copy-err-btn" onclick="event.stopPropagation();copyText('${escapeAttr(t.error+(t.detail?' | '+t.detail:''))}')">复制</button>`;
-
-        return `<tr id="row-${css}" data-model="${esc}"><td class="model-name-cell" data-label="模型">${escapeHtml(model)}</td>
-          <td data-label="非流式">${non}</td><td data-label="耗时">${formatTime(n.elapsed)}</td>
-          <td data-label="流式">${str}</td><td data-label="首字节">${formatTime(s.firstByte)}</td><td data-label="总耗时">${formatTime(s.elapsed)}</td>
-          <td data-label="工具调用">${tool}</td><td data-label="耗时">${formatTime(t.elapsed)}</td>
-          <td data-label="详情"><span class="clickable" onclick="showDetail('${esc}')">&#x2192;</span></td></tr>`;
-      }
-
-      window.copyText = async (text) => { try { await navigator.clipboard.writeText(text); showToast('已复制'); } catch { showToast('复制失败'); } };
 
       window.showDetail = (model) => {
-        const r = state.results[model]; if (!r) return;
-        const json = JSON.stringify({ model, ...r }, null, 2);
-        const overlay = document.createElement('div'); overlay.className = 'modal-overlay';
-        overlay.innerHTML = `<div class="modal-content"><button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button><h3 style="margin-top:0;">${escapeHtml(model)}</h3><pre>${escapeHtml(json)}</pre><button class="btn btn-sm btn-outline" style="margin-top:1rem;" onclick="navigator.clipboard.writeText(this.getAttribute('data-json'))" data-json="${escapeAttr(json)}">复制 JSON</button></div>`;
-        document.body.appendChild(overlay);
-        overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+        const r = state.results[model];
+        if (!r) return;
+        alert(JSON.stringify({model, ...r}, null, 2));
       };
 
-      window.copyAllErrors = async () => {
-        const arr = [];
-        for (const [m, r] of Object.entries(state.results)) for (const [k, v] of Object.entries(r)) if (v && !v.success) arr.push(`[${m}] ${k}: ${v.error}${v.detail?' | '+v.detail:''}${v.retries?' 重试'+v.retries:''}`);
-        if (!arr.length) return showToast('无错误');
-        try { await navigator.clipboard.writeText(arr.join('\n\n')); showToast(`已复制 ${arr.length} 条错误`); } catch { showToast('复制失败'); }
-      };
-
-      window.copyRateLimitedModels = async () => {
-        const limited = new Set();
-        for (const [model, res] of Object.entries(state.results)) for (const key of ['nonStream','stream','toolCall']) if (res[key] && !res[key].success && isRateLimitError(res[key].error)) limited.add(model);
-        if (!limited.size) return showToast('无限流模型');
-        try { await navigator.clipboard.writeText([...limited].join('\n')); showToast(`已复制 ${limited.size} 个限流模型`); } catch { showToast('复制失败'); }
-      };
-
-      window.exportResults = () => {
-        if (!Object.keys(state.results).length) return showToast('无数据');
-        const data = { time: new Date().toISOString(), base: normalizeUrl(apiUrlInp.value.trim()), tokens: getTotalTokens(), rateLimits: state.rateLimitCount, results: state.results };
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `api-test-${Date.now()}.json`; a.click(); showToast('已导出');
-      };
-
-      function getTotalTokens() {
-        let sum = 0;
-        for (const r of Object.values(state.results)) for (const k of ['nonStream','stream','toolCall']) if (r[k]?.usage?.total_tokens) sum += r[k].usage.total_tokens;
-        return sum;
-      }
-
-      function updateSummary() {
-        let total = 0, pass = 0, fail = 0; const models = new Set();
-        for (const [m, r] of Object.entries(state.results)) { models.add(m); for (const k of ['nonStream','stream','toolCall']) { if (r[k]) { total++; r[k].success ? pass++ : fail++; } } }
-        sumTotal.textContent = total; sumPass.textContent = pass; sumFail.textContent = fail;
-        sumRateLimit.textContent = state.rateLimitCount; sumTokens.textContent = getTotalTokens(); sumModels.textContent = models.size;
-        if (total) summaryCard.style.display = '';
-      }
-
-      function updateProgress() {
-        const pct = state.totalTests ? Math.round((state.completed / state.totalTests) * 100) : 0;
-        progressFill.style.width = pct + '%';
-        progressLabel.textContent = `${state.completed}/${state.totalTests}`;
-      }
-
-      function refreshRow(model) {
-        const row = document.getElementById(`row-${cssEscape(model)}`);
-        if (row) row.outerHTML = renderRow(model, state.results[model]);
-        else resultsBody.insertAdjacentHTML('beforeend', renderRow(model, state.results[model]));
-        updateSummary();
-      }
-
-      async function startAllTests() {
-        if (state.running) return;
-        const selected = getSelected(); if (!selected.length) return showToast('请选择模型');
-        const base = normalizeUrl(apiUrlInp.value.trim()), key = apiKeyInp.value.trim();
-        if (!base || !key) return showToast('配置不完整');
-        const timeout = Math.max(10, parseInt(timeoutSecInp.value) || 60);
-        const concurrency = Math.min(6, Math.max(1, parseInt(concurrencyInp.value) || 2));
-        const retries = Math.min(5, Math.max(0, parseInt(maxRetriesInp.value) || 3));
-        state.running = true; state.results = {}; state.totalTests = selected.length * 3; state.completed = 0; state.rateLimitCount = 0; state.globalLastRequestTime = 0;
-        updateProgress(); btnStart.disabled = true; btnStop.disabled = false; resultsCard.style.display = '';
-        resultsBody.innerHTML = selected.map(m => renderRow(m, {})).join(''); updateSummary();
-        liveIndicator.style.opacity = '1'; liveText.textContent = '初始化...';
-        const queue = [...selected]; const workers = new Set();
-        const processModel = async (model) => {
-          const r = { nonStream: null, stream: null, toolCall: null };
-          r.nonStream = await callNonStream(base, key, model, timeout, retries); state.completed++; updateProgress(); state.results[model] = r; refreshRow(model);
-          if (!state.running) return;
-          r.stream = await callStream(base, key, model, timeout, retries); state.completed++; updateProgress(); state.results[model] = r; refreshRow(model);
-          if (!state.running) return;
-          r.toolCall = await callTool(base, key, model, timeout, retries); state.completed++; updateProgress(); state.results[model] = r; refreshRow(model);
-          setCurrentTest(null, null);
-        };
-        while (queue.length && state.running) {
-          const m = queue.shift(); const p = processModel(m).finally(() => workers.delete(p)); workers.add(p);
-          if (workers.size >= concurrency) await Promise.race(workers);
-        }
-        await Promise.all(workers);
-        state.running = false; btnStart.disabled = false; btnStop.disabled = true;
-        liveIndicator.style.opacity = '0'; setCurrentTest(null, null);
-        updateSummary(); showToast('测试完成');
-      }
-
-      window.startAllTests = startAllTests;
-      window.stopAllTests = () => { state.running = false; btnStop.disabled = true; btnStart.disabled = false; liveIndicator.style.opacity = '0'; showToast('已停止'); };
-      window.clearResults = () => { state.results = {}; state.totalTests = state.completed = state.rateLimitCount = 0; updateProgress(); resultsBody.innerHTML = ''; resultsCard.style.display = 'none'; summaryCard.style.display = 'none'; liveIndicator.style.opacity = '0'; };
-
-      function renderModelTags() { modelsContainer.innerHTML = state.models.map((m,i) => `<div class="model-tag ${m.selected?'selected':''}" onclick="toggleModel(${i})"><span class="dot"></span>${escapeHtml(m.id)}</div>`).join(''); }
-      window.toggleModel = (i) => { state.models[i].selected = !state.models[i].selected; renderModelTags(); };
-      window.selectAllModels = () => { state.models.forEach(m => m.selected = true); renderModelTags(); };
-      window.deselectAllModels = () => { state.models.forEach(m => m.selected = false); renderModelTags(); };
-      window.invertSelection = () => { state.models.forEach(m => m.selected = !m.selected); renderModelTags(); };
-      function getSelected() { return state.models.filter(m => m.selected).map(m => m.id); }
-
-      async function fetchModels() {
-        const raw = apiUrlInp.value.trim(), key = apiKeyInp.value.trim(); if (!raw || !key) return showToast('请输入URL和Key');
-        const base = normalizeUrl(raw); const btn = $('#btnFetchModels'); btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> 获取中';
+      // API 调用函数 (带超时)
+      async function fetchWithTimeout(url, options, sec=45) {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), sec*1000);
         try {
-          const resp = await fetch(base + '/models', { headers: { Authorization: `Bearer ${key}` } });
-          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-          const data = await resp.json();
-          let list = data?.data ? data.data.map(m => m.id || m) : Array.isArray(data) ? data.map(m => m.id || m) : [];
-          state.models = [...new Set(list.filter(Boolean))].map(id => ({ id, selected: true }));
-          renderModelTags(); modelsCard.style.display = ''; testControlCard.style.display = '';
-          modelCountLabel.textContent = `模型列表 (${state.models.length})`; showToast(`已加载 ${state.models.length} 个模型`);
-        } catch (e) { showToast('获取失败: ' + e.message); } finally { btn.disabled = false; btn.textContent = '获取模型'; }
+          const resp = await fetch(url, {...options, signal: ctrl.signal});
+          clearTimeout(timer);
+          return resp;
+        } catch(e) {
+          clearTimeout(timer);
+          throw e.name==='AbortError' ? new Error('超时') : e;
+        }
       }
-      window.fetchModels = fetchModels;
-      document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); state.running ? window.stopAllTests() : window.startAllTests(); } });
+
+      async function testNonStream(model) {
+        const t0 = performance.now();
+        const resp = await fetchWithTimeout(API_BASE + '/chat/completions', {
+          method:'POST',
+          headers: {'Authorization':`Bearer ${API_KEY}`, 'Content-Type':'application/json'},
+          body: JSON.stringify({model, messages:[{role:'user',content:'你好，用一句话介绍自己。'}], stream:false, max_tokens:100})
+        });
+        const elapsed = performance.now()-t0;
+        if (!resp.ok) {
+          const txt = await resp.text().catch(()=>'');
+          return {success:false, elapsed, error:`${resp.status}`, detail:txt};
+        }
+        const data = await resp.json();
+        return {success:true, elapsed, content: data.choices?.[0]?.message?.content, usage: data.usage||null};
+      }
+
+      async function testStream(model) {
+        const t0 = performance.now();
+        let firstByte=null, content='', chunks=0, usage=null;
+        const resp = await fetchWithTimeout(API_BASE+'/chat/completions', {
+          method:'POST',
+          headers: {'Authorization':`Bearer ${API_KEY}`, 'Content-Type':'application/json'},
+          body: JSON.stringify({model, messages:[{role:'user',content:'一句话介绍人工智能。'}], stream:true, max_tokens:100, stream_options:{include_usage:true}})
+        }, 60);
+        if (!resp.ok) {
+          const txt = await resp.text().catch(()=>'');
+          return {success:false, elapsed:performance.now()-t0, error:`${resp.status}`, detail:txt};
+        }
+        const reader = resp.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer='';
+        while(true){
+          const {done, value} = await reader.read();
+          if(done) break;
+          if(!firstByte) firstByte = performance.now()-t0;
+          buffer += decoder.decode(value, {stream:true});
+          const lines = buffer.split('\n');
+          buffer = lines.pop();
+          for(const line of lines){
+            if(!line.startsWith('data:')) continue;
+            const d=line.slice(5).trim();
+            if(d==='[DONE]') continue;
+            try{ const j=JSON.parse(d); if(j.usage) usage=j.usage; const c=j.choices?.[0]?.delta?.content; if(c) content+=c; chunks++; } catch{}
+          }
+        }
+        return {success:true, elapsed:performance.now()-t0, firstByte, content, chunks, usage};
+      }
+
+      async function testToolCall(model) {
+        const t0 = performance.now();
+        const resp = await fetchWithTimeout(API_BASE+'/chat/completions', {
+          method:'POST',
+          headers: {'Authorization':`Bearer ${API_KEY}`, 'Content-Type':'application/json'},
+          body: JSON.stringify({model, messages:[{role:'user',content:'北京天气如何？'}], tools:[{type:'function',function:{name:'get_weather',parameters:{type:'object',properties:{city:{type:'string'}},required:['city']}}}], tool_choice:'auto', stream:false})
+        });
+        const elapsed = performance.now()-t0;
+        if(!resp.ok){
+          const txt = await resp.text().catch(()=>'');
+          return {success:false, elapsed, error:`${resp.status}`, detail:txt};
+        }
+        const data = await resp.json();
+        const hasTools = !!data.choices?.[0]?.message?.tool_calls;
+        return {success:true, elapsed, hasTools, usage: data.usage||null, content: data.choices?.[0]?.message?.content};
+      }
+
+      // 单个模型全测试
+      async function runSingleModelTests(model) {
+        const res = {nonStream:null, stream:null, toolCall:null};
+        try{ res.nonStream = await testNonStream(model); } catch(e){ res.nonStream = {success:false, error:e.message}; }
+        try{ res.stream = await testStream(model); } catch(e){ res.stream = {success:false, error:e.message}; }
+        try{ res.toolCall = await testToolCall(model); } catch(e){ res.toolCall = {success:false, error:e.message}; }
+        return res;
+      }
+
+      // 检查模型是否有失败/限速
+      function modelHasFailure(modelId) {
+        const r = state.results[modelId];
+        if (!r) return false;
+        for (const key of ['nonStream','stream','toolCall']) {
+          if (r[key] && !r[key].success) return true;
+        }
+        return false;
+      }
+
+      // 处理模型失败后的重试逻辑
+      function handleModelFailure(modelId) {
+        if (!state.modelStatus[modelId]) state.modelStatus[modelId] = {consecutiveFails:0, excluded:false, retryTimer:null};
+        const st = state.modelStatus[modelId];
+        if (st.excluded) return; // 今日已排除
+        st.consecutiveFails++;
+        if (st.consecutiveFails >= 3) {
+          st.excluded = true;
+          showToast(`模型 ${modelId} 连续失败3次，今日不再额外重试`);
+          if (st.retryTimer) { clearTimeout(st.retryTimer); st.retryTimer = null; }
+          updateScheduleDisplay();
+          return;
+        }
+        // 安排半小时后重试
+        if (st.retryTimer) clearTimeout(st.retryTimer);
+        st.retryTimer = setTimeout(() => retryModel(modelId), 30 * 60 * 1000);
+        showToast(`模型 ${modelId} 失败，将在30分钟后重试 (第${st.consecutiveFails}次)`);
+        updateScheduleDisplay();
+      }
+
+      async function retryModel(modelId) {
+        if (state.isRunning) {
+          // 如果正在全量测试，等待结束后再重试？简单处理：延迟1分钟再试
+          setTimeout(() => retryModel(modelId), 60000);
+          return;
+        }
+        showToast(`开始重试模型 ${modelId}`);
+        const res = await runSingleModelTests(modelId);
+        state.results[modelId] = res;
+        renderResultsTable();
+        updateSummary();
+        // 更新状态
+        const st = state.modelStatus[modelId] || {consecutiveFails:0, excluded:false};
+        st.retryTimer = null;
+        if (modelHasFailure(modelId)) {
+          st.consecutiveFails++;
+          if (st.consecutiveFails >= 3) {
+            st.excluded = true;
+            showToast(`模型 ${modelId} 重试后仍失败，已达3次，今日排除`);
+          } else {
+            // 重新安排半小时后重试
+            st.retryTimer = setTimeout(() => retryModel(modelId), 30 * 60 * 1000);
+          }
+        } else {
+          st.consecutiveFails = 0;
+          st.excluded = false;
+        }
+        state.modelStatus[modelId] = st;
+        updateScheduleDisplay();
+      }
+
+      // 全量测试
+      async function runFullTest() {
+        if (state.isRunning) return;
+        state.isRunning = true;
+        showToast('开始全量测试...');
+        // 刷新模型列表
+        await refreshModels();
+        const models = state.models.map(m => m.id);
+        // 顺序测试以避免过载
+        for (const model of models) {
+          if (!state.isRunning) break;
+          const res = await runSingleModelTests(model);
+          state.results[model] = res;
+          renderResultsTable();
+          updateSummary();
+          // 处理失败
+          if (modelHasFailure(model)) {
+            handleModelFailure(model);
+          } else {
+            // 成功后重置状态
+            if (state.modelStatus[model]) {
+              state.modelStatus[model].consecutiveFails = 0;
+              state.modelStatus[model].excluded = false;
+              if (state.modelStatus[model].retryTimer) {
+                clearTimeout(state.modelStatus[model].retryTimer);
+                state.modelStatus[model].retryTimer = null;
+              }
+            }
+          }
+          // 小延迟避免请求过快
+          await new Promise(r => setTimeout(r, 600));
+        }
+        state.isRunning = false;
+        state.lastFullTest = new Date();
+        updateScheduleDisplay();
+        showToast('全量测试完成');
+      }
+
+      // 刷新模型列表
+      async function refreshModels() {
+        try {
+          const resp = await fetch(API_BASE + '/models', {
+            headers: {'Authorization': `Bearer ${API_KEY}`}
+          });
+          if (!resp.ok) throw new Error('模型列表获取失败');
+          const data = await resp.json();
+          let list = data?.data ? data.data.map(m=>m.id||m) : [];
+          state.models = [...new Set(list.filter(Boolean))].map(id => ({id}));
+          // 初始化未有的模型状态
+          state.models.forEach(m => {
+            if (!state.modelStatus[m.id]) state.modelStatus[m.id] = {consecutiveFails:0, excluded:false, retryTimer:null};
+          });
+          updateScheduleDisplay();
+        } catch(e) {
+          showToast('模型刷新失败: '+e.message);
+        }
+      }
+
+      // 每日重置 (在凌晨4点触发)
+      function scheduleDailyReset() {
+        const now = new Date();
+        const resetTime = new Date(now);
+        resetTime.setHours(BASE_HOUR, 0, 0, 0);
+        if (now >= resetTime) resetTime.setDate(resetTime.getDate() + 1);
+        const delay = resetTime.getTime() - now.getTime();
+        setTimeout(() => {
+          // 重置所有排除状态
+          Object.values(state.modelStatus).forEach(s => {
+            s.consecutiveFails = 0;
+            s.excluded = false;
+            if (s.retryTimer) { clearTimeout(s.retryTimer); s.retryTimer = null; }
+          });
+          showToast('每日重置：失败计数已清零');
+          updateScheduleDisplay();
+          scheduleDailyReset(); // 安排下一天
+        }, delay);
+      }
+
+      // 启动定时任务
+      function scheduleTasks() {
+        // 清除旧定时器
+        if (state.fullTestTimer) clearTimeout(state.fullTestTimer);
+        if (state.modelRefreshTimer) clearTimeout(state.modelRefreshTimer);
+
+        const now = new Date();
+        const nextFull = nextTriggerTime(60, BASE_HOUR);
+        const nextRefresh = nextTriggerTime(30, BASE_HOUR);
+
+        state.fullTestTimer = setTimeout(() => {
+          runFullTest();
+          scheduleTasks(); // 递归安排下一次
+        }, nextFull.getTime() - now.getTime());
+
+        state.modelRefreshTimer = setTimeout(() => {
+          refreshModels();
+          scheduleTasks(); // 递归安排
+        }, nextRefresh.getTime() - now.getTime());
+
+        updateScheduleDisplay();
+      }
+
+      // 初始化启动
+      async function init() {
+        updateClock();
+        await refreshModels();
+        // 立即执行一次全量测试（如果需要）
+        showToast('系统就绪，即将开始首次全量测试');
+        await runFullTest();
+        scheduleDailyReset();
+        scheduleTasks();
+      }
+
+      init().catch(e => console.error(e));
+
+      // 每10秒更新计划显示
+      setInterval(updateScheduleDisplay, 10000);
     })();
   </script>
 </body>
