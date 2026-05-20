@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes, viewport-fit=cover">
-  <title>API 全能力测试 · 流式 / 非流式 / 工具调用</title>
+  <title>API 全能力测试 · 限流感知版</title>
   <style>
     * {
       margin: 0;
@@ -19,8 +19,6 @@
       --text-primary: #f0f0f0;
       --text-secondary: #a0a0a0;
       --text-muted: #707070;
-      --surface: rgba(255, 255, 255, 0.04);
-      --accent: #f0f0f0;
       --success: #6ecf8a;
       --danger: #e0676b;
       --warning: #d4a853;
@@ -35,7 +33,7 @@
 
     body {
       font-family: var(--font-sans);
-      background: linear-gradient(145deg, #0e0e10 0%, #1a1a1d 100%);
+      background: radial-gradient(circle at 30% 30%, #121215 0%, #0a0a0c 100%);
       background-attachment: fixed;
       color: var(--text-primary);
       min-height: 100vh;
@@ -70,7 +68,6 @@
       gap: 1.6rem;
     }
 
-    /* Header */
     .header {
       display: flex;
       align-items: center;
@@ -104,11 +101,6 @@
       transition: transform 0.3s ease;
     }
 
-    .logo-mark span {
-      font-size: 1.4rem;
-      font-weight: 300;
-    }
-
     .logo-text h1 {
       font-weight: 550;
       font-size: 1.25rem;
@@ -134,7 +126,6 @@
       letter-spacing: 0.3px;
     }
 
-    /* Form */
     .form-grid {
       display: grid;
       grid-template-columns: 2fr 2fr auto;
@@ -187,7 +178,6 @@
       color: #555;
     }
 
-    /* Buttons */
     .btn {
       padding: 0.7rem 1.3rem;
       border-radius: 12px;
@@ -247,7 +237,6 @@
       border-radius: 8px;
     }
 
-    /* Model tags */
     .model-cloud {
       display: flex;
       flex-wrap: wrap;
@@ -300,11 +289,10 @@
       gap: 1rem;
     }
 
-    /* Progress */
     .progress-wrap {
       display: flex;
-      align-items: center;
-      gap: 0.8rem;
+      flex-direction: column;
+      gap: 0.5rem;
       flex: 1;
       min-width: 180px;
     }
@@ -313,7 +301,7 @@
       height: 5px;
       background: rgba(255, 255, 255, 0.08);
       border-radius: 8px;
-      flex: 1;
+      width: 100%;
       overflow: hidden;
     }
 
@@ -323,17 +311,80 @@
       border-radius: 8px;
       width: 0%;
       transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
     }
 
-    .progress-label {
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%);
+      }
+      100% {
+        transform: translateX(100%);
+      }
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-size: 0.75rem;
       color: var(--text-secondary);
-      min-width: 65px;
-      text-align: right;
-      font-weight: 450;
+      gap: 1rem;
     }
 
-    /* Summary */
+    .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.3rem 0.9rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 10px #fff, 0 0 20px rgba(255, 255, 255, 0.5);
+      animation: breathe 1.2s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%,
+      100% {
+        opacity: 0.4;
+        transform: scale(0.9);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.3);
+      }
+    }
+
+    .live-text {
+      font-size: 0.78rem;
+      color: #ddd;
+      font-weight: 450;
+      max-width: 220px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
@@ -367,7 +418,6 @@
       font-weight: 450;
     }
 
-    /* Table */
     .table-container {
       overflow-x: auto;
       padding: 1rem 2rem;
@@ -437,6 +487,12 @@
       color: #e88488;
     }
 
+    .status-limit {
+      background: rgba(212, 168, 83, 0.15);
+      color: #dbb862;
+      border: 1px solid rgba(212, 168, 83, 0.3);
+    }
+
     .status-warn {
       background: rgba(212, 168, 83, 0.1);
       color: #dbb862;
@@ -484,14 +540,29 @@
       margin-left: 2px;
     }
 
+    .error-hint {
+      font-size: 0.62rem;
+      color: #c97272;
+      margin-left: 4px;
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: inline-block;
+      vertical-align: middle;
+      cursor: default;
+    }
+
     /* Mobile cards */
     @media (max-width: 750px) {
       .table-container {
         padding: 0.8rem;
       }
+
       .results-table thead {
         display: none;
       }
+
       .results-table,
       .results-table tbody,
       .results-table tr,
@@ -499,6 +570,7 @@
         display: block;
         width: 100%;
       }
+
       .results-table tr {
         margin-bottom: 1rem;
         background: rgba(255, 255, 255, 0.02);
@@ -506,6 +578,7 @@
         padding: 0.8rem 0.7rem;
         border: 1px solid rgba(255, 255, 255, 0.05);
       }
+
       .results-table td {
         border-bottom: none;
         padding: 0.3rem 0.3rem;
@@ -514,6 +587,7 @@
         align-items: center;
         font-size: 0.76rem;
       }
+
       .results-table td::before {
         content: attr(data-label);
         font-weight: 500;
@@ -523,17 +597,18 @@
         letter-spacing: 0.4px;
         margin-right: 0.8rem;
       }
+
       .model-name-cell {
         font-size: 0.85rem;
         font-weight: 550;
         justify-content: flex-start;
       }
+
       .model-name-cell::before {
         display: none;
       }
     }
 
-    /* Modal */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -613,7 +688,6 @@
       }
     }
 
-    /* Toast */
     .toast-area {
       position: fixed;
       top: 1.5rem;
@@ -657,7 +731,6 @@
       }
     }
 
-    /* Tip text */
     .hint {
       font-size: 0.65rem;
       color: #5a5a5a;
@@ -670,15 +743,19 @@
         flex-direction: column;
         align-items: stretch;
       }
+
       .progress-wrap {
         width: 100%;
       }
+
       .header {
         padding: 1rem 1.2rem;
       }
+
       .glass-panel {
         border-radius: 14px;
       }
+
       .stats-grid {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -696,7 +773,7 @@
           <div class="sub">非流式 · 流式 · 工具调用</div>
         </div>
       </div>
-      <div class="badge">OpenAI 兼容</div>
+      <div class="badge">OpenAI 兼容 · 限流感知</div>
     </div>
 
     <!-- Config -->
@@ -727,12 +804,18 @@
       <div class="model-cloud" id="modelsContainer"></div>
     </div>
 
-    <!-- Control -->
+    <!-- Control + Live Indicator -->
     <div class="glass-panel" id="testControlCard" style="display:none;">
       <div class="action-row">
         <div class="progress-wrap">
           <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-          <span class="progress-label" id="progressLabel">就绪</span>
+          <div class="progress-meta">
+            <span class="progress-label" id="progressLabel">就绪</span>
+            <div class="live-indicator" id="liveIndicator" style="opacity:0; transition: opacity 0.3s;">
+              <span class="live-dot"></span>
+              <span class="live-text" id="liveText">等待开始</span>
+            </div>
+          </div>
         </div>
         <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
           <button class="btn btn-primary" id="btnStart" onclick="startAllTests()">开始测试</button>
@@ -746,7 +829,7 @@
         <span>间隔 <input class="input-field" id="requestInterval" type="number" value="800" min="200" max="5000" step="100" style="width:60px;padding:0.3rem;text-align:center;"> ms</span>
         <span>重试 <input class="input-field" id="maxRetries" type="number" value="3" min="0" max="5" style="width:40px;padding:0.3rem;text-align:center;"></span>
       </div>
-      <div class="hint">请求间隔与指数退避重试可缓解429限流。</div>
+      <div class="hint">指数退避重试 · 速率间隔控制 · 实时状态追踪 · 限流自动标记</div>
     </div>
 
     <!-- Summary -->
@@ -755,6 +838,7 @@
         <span style="color:#ccc;font-weight:500;font-size:0.9rem;">测试汇总</span>
         <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
           <button class="btn btn-outline btn-sm" onclick="copyAllErrors()">复制错误</button>
+          <button class="btn btn-outline btn-sm" onclick="copyRateLimitedModels()">复制限流模型</button>
           <button class="btn btn-outline btn-sm" onclick="exportResults()">导出 JSON</button>
         </div>
       </div>
@@ -762,7 +846,7 @@
         <div class="stat-card"><div class="stat-value" id="sumTotal">0</div><div class="stat-label">总计</div></div>
         <div class="stat-card"><div class="stat-value" id="sumPass" style="color:#8fdda0;">0</div><div class="stat-label">通过</div></div>
         <div class="stat-card"><div class="stat-value" id="sumFail" style="color:#e88488;">0</div><div class="stat-label">失败</div></div>
-        <div class="stat-card"><div class="stat-value" id="sumRateLimit" style="color:#dbb862;">0</div><div class="stat-label">限流</div></div>
+        <div class="stat-card"><div class="stat-value" id="sumRateLimit" style="color:#dbb862;">0</div><div class="stat-label">限流次数</div></div>
         <div class="stat-card"><div class="stat-value" id="sumTokens" style="color:#9ac4da;">0</div><div class="stat-label">Tokens</div></div>
         <div class="stat-card"><div class="stat-value" id="sumModels" style="color:#eee;">0</div><div class="stat-label">模型</div></div>
       </div>
@@ -803,6 +887,7 @@
         completed: 0,
         globalLastRequestTime: 0,
         rateLimitCount: 0,
+        currentTest: { model: null, type: null }
       };
 
       const $ = (s) => document.querySelector(s);
@@ -830,6 +915,18 @@
       const concurrencyInp = $('#concurrency');
       const requestIntervalInp = $('#requestInterval');
       const maxRetriesInp = $('#maxRetries');
+      const liveIndicator = $('#liveIndicator');
+      const liveText = $('#liveText');
+
+      function setCurrentTest(model, type) {
+        state.currentTest = { model, type };
+        if (model && type && state.running) {
+          liveText.textContent = `${model} · ${type}`;
+          liveIndicator.style.opacity = '1';
+        } else if (!state.running) {
+          liveIndicator.style.opacity = '0';
+        }
+      }
 
       function showToast(msg, type = 'info') {
         const toast = document.createElement('div');
@@ -852,8 +949,7 @@
       }
 
       function escapeAttr(str) {
-        return (str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;');
+        return (str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
       }
 
       function cssEscape(str) {
@@ -928,24 +1024,18 @@
             return { success: false, elapsed: 0, error: e.message, retries: i };
           }
         }
-        return {
-          success: false,
-          elapsed: last?.elapsed || 0,
-          error: (last?.error || '未知错误') + ` (重试${maxRetries}次)`,
-          detail: detailAcc,
-          retries: maxRetries
-        };
+        return { success: false, elapsed: last?.elapsed || 0, error: (last?.error || '未知错误') + ` (重试${maxRetries}次)`, detail: detailAcc, retries: maxRetries };
       }
 
       async function callNonStream(base, key, model, timeout, retries) {
+        setCurrentTest(model, '非流式');
         return callWithRetry(async () => {
           await waitForRateLimit();
           const t0 = performance.now();
           const resp = await fetchWithTimeout(base + '/chat/completions', {
             method: 'POST',
             headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ model, messages: [{ role: 'user', content: '你好，用一句话介绍自己。' }],
-              stream: false, max_tokens: 100 })
+            body: JSON.stringify({ model, messages: [{ role: 'user', content: '你好，用一句话介绍自己。' }], stream: false, max_tokens: 100 })
           }, timeout);
           const elapsed = performance.now() - t0;
           if (!resp.ok) {
@@ -958,12 +1048,12 @@
       }
 
       async function callStream(base, key, model, timeout, retries) {
+        setCurrentTest(model, '流式');
         const doStream = async (withUsage) => {
           await waitForRateLimit();
           const t0 = performance.now();
           let firstByte = null, content = '', chunks = 0, usage = null;
-          const body = { model, messages: [{ role: 'user', content: '一句话介绍人工智能。' }], stream: true,
-            max_tokens: 100 };
+          const body = { model, messages: [{ role: 'user', content: '一句话介绍人工智能。' }], stream: true, max_tokens: 100 };
           if (withUsage) body.stream_options = { include_usage: true };
           const resp = await fetchWithTimeout(base + '/chat/completions', {
             method: 'POST',
@@ -973,9 +1063,7 @@
           if (!resp.ok) {
             const txt = await resp.text().catch(() => '');
             const err = new Error(`${resp.status} ${resp.statusText}`);
-            err.status = resp.status;
-            err.detail = txt;
-            err.isHttp = true;
+            err.status = resp.status; err.detail = txt; err.isHttp = true;
             throw err;
           }
           const reader = resp.body.getReader();
@@ -992,9 +1080,7 @@
               if (!line.startsWith('data:')) continue;
               const d = line.slice(5).trim();
               if (d === '[DONE]') continue;
-              try { const j = JSON.parse(d); if (j.usage) usage = j.usage; const c = j.choices?.[0]?.delta
-                  ?.content; if (c) content += c;
-                chunks++; } catch {}
+              try { const j = JSON.parse(d); if (j.usage) usage = j.usage; const c = j.choices?.[0]?.delta?.content; if (c) content += c; chunks++; } catch {}
             }
           }
           return { success: true, elapsed: performance.now() - t0, firstByte, content, chunks, usage };
@@ -1003,31 +1089,23 @@
           try { return await doStream(true); } catch (e) {
             if (e.isHttp && (e.status === 400 || e.status === 404 || e.status === 501)) {
               try { return await doStream(false); } catch (e2) {
-                return { success: false, elapsed: 0, error: e2.isHttp ? `${e2.status}` : e2.message, detail: e2
-                    .detail || '' };
+                return { success: false, elapsed: 0, error: e2.isHttp ? `${e2.status}` : e2.message, detail: e2.detail || '' };
               }
             }
-            return { success: false, elapsed: 0, error: e.isHttp ? `${e.status}` : e.message, detail: e.detail ||
-                '' };
+            return { success: false, elapsed: 0, error: e.isHttp ? `${e.status}` : e.message, detail: e.detail || '' };
           }
         }, retries);
       }
 
       async function callTool(base, key, model, timeout, retries) {
+        setCurrentTest(model, '工具调用');
         return callWithRetry(async () => {
           await waitForRateLimit();
           const t0 = performance.now();
           const resp = await fetchWithTimeout(base + '/chat/completions', {
             method: 'POST',
             headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              model,
-              messages: [{ role: 'user', content: '北京天气如何？' }],
-              tools: [{ type: 'function', function: { name: 'get_weather', parameters: { type: 'object',
-                    properties: { city: { type: 'string' } }, required: ['city'] } } }],
-              tool_choice: 'auto',
-              stream: false
-            })
+            body: JSON.stringify({ model, messages: [{ role: 'user', content: '北京天气如何？' }], tools: [{ type: 'function', function: { name: 'get_weather', parameters: { type: 'object', properties: { city: { type: 'string' } }, required: ['city'] } } }], tool_choice: 'auto', stream: false })
           }, timeout);
           const elapsed = performance.now() - t0;
           if (!resp.ok) {
@@ -1035,45 +1113,40 @@
             return { success: false, elapsed, error: `${resp.status} ${resp.statusText}`, detail: txt };
           }
           const data = await resp.json();
-          return {
-            success: true,
-            elapsed,
-            hasTools: !!data.choices?.[0]?.message?.tool_calls,
-            usage: data.usage || null,
-            content: data.choices?.[0]?.message?.content
-          };
+          return { success: true, elapsed, hasTools: !!data.choices?.[0]?.message?.tool_calls, usage: data.usage || null, content: data.choices?.[0]?.message?.content };
         }, retries);
       }
 
       function tokenLabel(usage) {
         if (!usage || usage.total_tokens == null) return '';
-        const t = usage.total_tokens;
-        const p = usage.prompt_tokens;
-        const c = usage.completion_tokens;
-        let title = `共${t}`;
-        if (p != null) title += ` 提示${p}`;
-        if (c != null) title += ` 生成${c}`;
-        return `<span class="token-info" title="${title}">${t} tk</span>`;
+        const t = usage.total_tokens; const p = usage.prompt_tokens; const c = usage.completion_tokens;
+        return `<span class="token-info" title="共${t} 提示${p??'?'} 生成${c??'?'}">${t} tk</span>`;
       }
 
-      function retryLabel(n) {
-        if (!n) return '';
-        return `<span class="retry-info">&#x21bb;${n}</span>`;
+      function retryLabel(n) { return n ? `<span class="retry-info">&#x21bb;${n}</span>` : ''; }
+
+      function errorHint(err, detail) {
+        if (!err) return '';
+        const full = (err + (detail ? ' | ' + detail : '')).replace(/"/g, '&quot;');
+        const short = (err.split(' ')[0] || '').substring(0, 25);
+        return `<span class="error-hint" title="${full}">${escapeHtml(short)}</span>`;
       }
 
       function renderRow(model, res) {
         const n = res.nonStream || {}, s = res.stream || {}, t = res.toolCall || {};
         const esc = escapeAttr(model), css = cssEscape(model);
+        const nonLimited = !n.success && isRateLimitError(n.error || '');
+        const strLimited = !s.success && isRateLimitError(s.error || '');
+        const toolLimited = !t.success && isRateLimitError(t.error || '');
         const non = n.success ?
           `<span class="status-badge status-pass">通过</span>${tokenLabel(n.usage)}${retryLabel(n.retries)}` :
-          `<span class="status-badge status-fail">失败</span>${retryLabel(n.retries)}${n.error?` <button class="copy-err-btn" onclick="event.stopPropagation();copyText('${escapeAttr(n.error+(n.detail?' | '+n.detail:''))}')">复制</button>`:''}`;
+          `${nonLimited ? '<span class="status-badge status-limit">限流</span>' : '<span class="status-badge status-fail">失败</span>'}${retryLabel(n.retries)}${errorHint(n.error, n.detail)}<button class="copy-err-btn" onclick="event.stopPropagation();copyText('${escapeAttr(n.error+(n.detail?' | '+n.detail:''))}')">复制</button>`;
         const str = s.success ?
           `<span class="status-badge status-pass">通过</span>${tokenLabel(s.usage)}${retryLabel(s.retries)}` :
-          `<span class="status-badge status-fail">失败</span>${retryLabel(s.retries)}${s.error?` <button class="copy-err-btn" onclick="event.stopPropagation();copyText('${escapeAttr(s.error+(s.detail?' | '+s.detail:''))}')">复制</button>`:''}`;
+          `${strLimited ? '<span class="status-badge status-limit">限流</span>' : '<span class="status-badge status-fail">失败</span>'}${retryLabel(s.retries)}${errorHint(s.error, s.detail)}<button class="copy-err-btn" onclick="event.stopPropagation();copyText('${escapeAttr(s.error+(s.detail?' | '+s.detail:''))}')">复制</button>`;
         const tool = t.success ?
-          (t.hasTools ? `<span class="status-badge status-pass">已调用</span>` :
-            '<span class="status-badge status-warn">未调用</span>') + tokenLabel(t.usage) + retryLabel(t.retries) :
-          `<span class="status-badge status-fail">失败</span>${retryLabel(t.retries)}${t.error?` <button class="copy-err-btn" onclick="event.stopPropagation();copyText('${escapeAttr(t.error+(t.detail?' | '+t.detail:''))}')">复制</button>`:''}`;
+          (t.hasTools ? `<span class="status-badge status-pass">已调用</span>` : '<span class="status-badge status-warn">未调用</span>') + tokenLabel(t.usage) + retryLabel(t.retries) :
+          `${toolLimited ? '<span class="status-badge status-limit">限流</span>' : '<span class="status-badge status-fail">失败</span>'}${retryLabel(t.retries)}${errorHint(t.error, t.detail)}<button class="copy-err-btn" onclick="event.stopPropagation();copyText('${escapeAttr(t.error+(t.detail?' | '+t.detail:''))}')">复制</button>`;
 
         return `<tr id="row-${css}" data-model="${esc}"><td class="model-name-cell" data-label="模型">${escapeHtml(model)}</td>
           <td data-label="非流式">${non}</td><td data-label="耗时">${formatTime(n.elapsed)}</td>
@@ -1082,65 +1155,59 @@
           <td data-label="详情"><span class="clickable" onclick="showDetail('${esc}')">&#x2192;</span></td></tr>`;
       }
 
-      window.copyText = async (text) => {
-        try { await navigator.clipboard.writeText(text);
-          showToast('已复制'); } catch { showToast('复制失败'); }
-      };
+      window.copyText = async (text) => { try { await navigator.clipboard.writeText(text); showToast('已复制'); } catch { showToast('复制失败'); } };
+
       window.showDetail = (model) => {
-        const r = state.results[model];
-        if (!r) return;
+        const r = state.results[model]; if (!r) return;
         const json = JSON.stringify({ model, ...r }, null, 2);
-        const overlay = document.createElement('div');
-        overlay.className = 'modal-overlay';
+        const overlay = document.createElement('div'); overlay.className = 'modal-overlay';
         overlay.innerHTML = `<div class="modal-content"><button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button><h3 style="margin-top:0;font-weight:500;">${escapeHtml(model)}</h3><pre>${escapeHtml(json)}</pre><button class="btn btn-sm btn-outline" style="margin-top:1rem;" onclick="navigator.clipboard.writeText(this.getAttribute('data-json'))" data-json="${escapeAttr(json)}">复制 JSON</button></div>`;
         document.body.appendChild(overlay);
         overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
       };
+
       window.copyAllErrors = async () => {
         const arr = [];
-        for (const [m, r] of Object.entries(state.results))
-          for (const [k, v] of Object.entries(r))
-            if (v && !v.success) arr.push(`[${m}] ${k}: ${v.error||'?'}${v.detail?' | '+v.detail:''}${v.retries?' 重试'+v.retries:''}`);
+        for (const [m, r] of Object.entries(state.results)) for (const [k, v] of Object.entries(r)) if (v && !v.success) arr.push(`[${m}] ${k}: ${v.error||'?'}${v.detail?' | '+v.detail:''}${v.retries?' 重试'+v.retries:''}`);
         if (!arr.length) return showToast('无错误');
-        try { await navigator.clipboard.writeText(arr.join('\n\n'));
-          showToast(`已复制 ${arr.length} 条`); } catch { showToast('复制失败'); }
+        try { await navigator.clipboard.writeText(arr.join('\n\n')); showToast(`已复制 ${arr.length} 条错误`); } catch { showToast('复制失败'); }
       };
+
+      // 一键复制限流模型
+      window.copyRateLimitedModels = async () => {
+        const limitedModels = new Set();
+        for (const [model, res] of Object.entries(state.results)) {
+          for (const key of ['nonStream', 'stream', 'toolCall']) {
+            if (res[key] && !res[key].success && isRateLimitError(res[key].error || '')) {
+              limitedModels.add(model);
+            }
+          }
+        }
+        if (limitedModels.size === 0) return showToast('没有限流模型');
+        try {
+          await navigator.clipboard.writeText([...limitedModels].join('\n'));
+          showToast(`已复制 ${limitedModels.size} 个限流模型`);
+        } catch { showToast('复制失败'); }
+      };
+
       window.exportResults = () => {
         if (!Object.keys(state.results).length) return showToast('无数据');
-        const data = { time: new Date().toISOString(), base: normalizeUrl(apiUrlInp.value.trim()),
-          tokens: getTotalTokens(), rateLimits: state.rateLimitCount, results: state.results };
+        const data = { time: new Date().toISOString(), base: normalizeUrl(apiUrlInp.value.trim()), tokens: getTotalTokens(), rateLimits: state.rateLimitCount, results: state.results };
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `api-test-${Date.now()}.json`;
-        a.click();
-        showToast('已导出');
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `api-test-${Date.now()}.json`; a.click(); showToast('已导出');
       };
 
       function getTotalTokens() {
         let sum = 0;
-        for (const r of Object.values(state.results))
-          for (const k of ['nonStream', 'stream', 'toolCall'])
-            if (r[k]?.usage?.total_tokens) sum += r[k].usage.total_tokens;
+        for (const r of Object.values(state.results)) for (const k of ['nonStream', 'stream', 'toolCall']) if (r[k]?.usage?.total_tokens) sum += r[k].usage.total_tokens;
         return sum;
       }
 
       function updateSummary() {
-        let total = 0,
-          pass = 0,
-          fail = 0;
-        const models = new Set();
-        for (const [m, r] of Object.entries(state.results)) {
-          models.add(m);
-          for (const k of ['nonStream', 'stream', 'toolCall']) { if (r[k]) { total++;
-              r[k].success ? pass++ : fail++; } }
-        }
-        sumTotal.textContent = total;
-        sumPass.textContent = pass;
-        sumFail.textContent = fail;
-        sumRateLimit.textContent = state.rateLimitCount;
-        sumTokens.textContent = getTotalTokens();
-        sumModels.textContent = models.size;
+        let total = 0, pass = 0, fail = 0; const models = new Set();
+        for (const [m, r] of Object.entries(state.results)) { models.add(m); for (const k of ['nonStream', 'stream', 'toolCall']) { if (r[k]) { total++; r[k].success ? pass++ : fail++; } } }
+        sumTotal.textContent = total; sumPass.textContent = pass; sumFail.textContent = fail;
+        sumRateLimit.textContent = state.rateLimitCount; sumTokens.textContent = getTotalTokens(); sumModels.textContent = models.size;
         if (total) summaryCard.style.display = '';
       }
 
@@ -1159,117 +1226,62 @@
 
       async function startAllTests() {
         if (state.running) return;
-        const selected = getSelected();
-        if (!selected.length) return showToast('请选择模型');
-        const base = normalizeUrl(apiUrlInp.value.trim());
-        const key = apiKeyInp.value.trim();
+        const selected = getSelected(); if (!selected.length) return showToast('请选择模型');
+        const base = normalizeUrl(apiUrlInp.value.trim()), key = apiKeyInp.value.trim();
         if (!base || !key) return showToast('配置不完整');
         const timeout = Math.max(10, parseInt(timeoutSecInp.value) || 60);
         const concurrency = Math.min(6, Math.max(1, parseInt(concurrencyInp.value) || 2));
         const retries = Math.min(5, Math.max(0, parseInt(maxRetriesInp.value) || 3));
-        state.running = true;
-        state.results = {};
-        state.totalTests = selected.length * 3;
-        state.completed = 0;
-        state.rateLimitCount = 0;
-        state.globalLastRequestTime = 0;
-        updateProgress();
-        btnStart.disabled = true;
-        btnStop.disabled = false;
-        resultsCard.style.display = '';
-        resultsBody.innerHTML = selected.map(m => renderRow(m, {})).join('');
-        updateSummary();
-        const queue = [...selected];
-        const workers = new Set();
+        state.running = true; state.results = {}; state.totalTests = selected.length * 3; state.completed = 0; state.rateLimitCount = 0; state.globalLastRequestTime = 0;
+        updateProgress(); btnStart.disabled = true; btnStop.disabled = false; resultsCard.style.display = '';
+        resultsBody.innerHTML = selected.map(m => renderRow(m, {})).join(''); updateSummary();
+        liveIndicator.style.opacity = '1'; liveText.textContent = '初始化...';
+        const queue = [...selected]; const workers = new Set();
         const processModel = async (model) => {
           const r = { nonStream: null, stream: null, toolCall: null };
-          r.nonStream = await callNonStream(base, key, model, timeout, retries);
-          state.completed++;
-          updateProgress();
-          state.results[model] = r;
-          refreshRow(model);
+          r.nonStream = await callNonStream(base, key, model, timeout, retries); state.completed++; updateProgress(); state.results[model] = r; refreshRow(model);
           if (!state.running) return;
-          r.stream = await callStream(base, key, model, timeout, retries);
-          state.completed++;
-          updateProgress();
-          state.results[model] = r;
-          refreshRow(model);
+          r.stream = await callStream(base, key, model, timeout, retries); state.completed++; updateProgress(); state.results[model] = r; refreshRow(model);
           if (!state.running) return;
-          r.toolCall = await callTool(base, key, model, timeout, retries);
-          state.completed++;
-          updateProgress();
-          state.results[model] = r;
-          refreshRow(model);
+          r.toolCall = await callTool(base, key, model, timeout, retries); state.completed++; updateProgress(); state.results[model] = r; refreshRow(model);
+          setCurrentTest(null, null);
         };
         while (queue.length && state.running) {
-          const m = queue.shift();
-          const p = processModel(m).finally(() => workers.delete(p));
-          workers.add(p);
+          const m = queue.shift(); const p = processModel(m).finally(() => workers.delete(p)); workers.add(p);
           if (workers.size >= concurrency) await Promise.race(workers);
         }
         await Promise.all(workers);
-        state.running = false;
-        btnStart.disabled = false;
-        btnStop.disabled = true;
-        updateSummary();
+        state.running = false; btnStart.disabled = false; btnStop.disabled = true;
+        liveIndicator.style.opacity = '0'; setCurrentTest(null, null);
+        updateSummary(); showToast('测试完成');
       }
 
       window.startAllTests = startAllTests;
-      window.stopAllTests = () => { state.running = false;
-        btnStop.disabled = true;
-        btnStart.disabled = false;
-        showToast('已停止'); };
-      window.clearResults = () => {
-        state.results = {};
-        state.totalTests = state.completed = state.rateLimitCount = 0;
-        updateProgress();
-        resultsBody.innerHTML = '';
-        resultsCard.style.display = 'none';
-        summaryCard.style.display = 'none';
-      };
+      window.stopAllTests = () => { state.running = false; btnStop.disabled = true; btnStart.disabled = false; liveIndicator.style.opacity = '0'; showToast('已停止'); };
+      window.clearResults = () => { state.results = {}; state.totalTests = state.completed = state.rateLimitCount = 0; updateProgress(); resultsBody.innerHTML = ''; resultsCard.style.display = 'none'; summaryCard.style.display = 'none'; liveIndicator.style.opacity = '0'; };
 
-      function renderModelTags() {
-        modelsContainer.innerHTML = state.models.map((m, i) =>
-          `<div class="model-tag ${m.selected?'selected':''}" onclick="toggleModel(${i})"><span class="dot"></span>${escapeHtml(m.id)}</div>`
-        ).join('');
-      }
-      window.toggleModel = (i) => { state.models[i].selected = !state.models[i].selected;
-        renderModelTags(); };
-      window.selectAllModels = () => { state.models.forEach(m => m.selected = true);
-        renderModelTags(); };
-      window.deselectAllModels = () => { state.models.forEach(m => m.selected = false);
-        renderModelTags(); };
-      window.invertSelection = () => { state.models.forEach(m => m.selected = !m.selected);
-        renderModelTags(); };
-
+      function renderModelTags() { modelsContainer.innerHTML = state.models.map((m,i) => `<div class="model-tag ${m.selected?'selected':''}" onclick="toggleModel(${i})"><span class="dot"></span>${escapeHtml(m.id)}</div>`).join(''); }
+      window.toggleModel = (i) => { state.models[i].selected = !state.models[i].selected; renderModelTags(); };
+      window.selectAllModels = () => { state.models.forEach(m => m.selected = true); renderModelTags(); };
+      window.deselectAllModels = () => { state.models.forEach(m => m.selected = false); renderModelTags(); };
+      window.invertSelection = () => { state.models.forEach(m => m.selected = !m.selected); renderModelTags(); };
       function getSelected() { return state.models.filter(m => m.selected).map(m => m.id); }
 
       async function fetchModels() {
-        const raw = apiUrlInp.value.trim(),
-          key = apiKeyInp.value.trim();
-        if (!raw || !key) return showToast('请输入URL和Key');
-        const base = normalizeUrl(raw);
-        const btn = $('#btnFetchModels');
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner"></span> 获取中';
+        const raw = apiUrlInp.value.trim(), key = apiKeyInp.value.trim(); if (!raw || !key) return showToast('请输入URL和Key');
+        const base = normalizeUrl(raw); const btn = $('#btnFetchModels'); btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> 获取中';
         try {
           const resp = await fetch(base + '/models', { headers: { Authorization: `Bearer ${key}` } });
           if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
           const data = await resp.json();
           let list = data?.data ? data.data.map(m => m.id || m) : Array.isArray(data) ? data.map(m => m.id || m) : [];
           state.models = [...new Set(list.filter(Boolean))].map(id => ({ id, selected: true }));
-          renderModelTags();
-          modelsCard.style.display = '';
-          testControlCard.style.display = '';
-          modelCountLabel.textContent = `模型列表 (${state.models.length})`;
-          showToast(`已加载 ${state.models.length} 个模型`);
-        } catch (e) { showToast('获取失败: ' + e.message); } finally { btn.disabled = false;
-          btn.textContent = '获取模型'; }
+          renderModelTags(); modelsCard.style.display = ''; testControlCard.style.display = '';
+          modelCountLabel.textContent = `模型列表 (${state.models.length})`; showToast(`已加载 ${state.models.length} 个模型`);
+        } catch (e) { showToast('获取失败: ' + e.message); } finally { btn.disabled = false; btn.textContent = '获取模型'; }
       }
       window.fetchModels = fetchModels;
-      document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e
-          .preventDefault();
-          state.running ? window.stopAllTests() : window.startAllTests(); } });
+      document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); state.running ? window.stopAllTests() : window.startAllTests(); } });
     })();
   </script>
 </body>
