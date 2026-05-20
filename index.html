@@ -1,1764 +1,985 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API 接口全能力测试工具</title>
-    <style>
-        :root {
-            --bg: #f0f2f5;
-            --surface: #ffffff;
-            --surface-alt: #f8f9fa;
-            --border: #e0e3e8;
-            --text: #1a1d23;
-            --text-secondary: #5f6368;
-            --text-muted: #8b9198;
-            --primary: #4f6ef7;
-            --primary-hover: #3b56e0;
-            --primary-light: #eef1fe;
-            --success: #22c55e;
-            --success-bg: #f0fdf6;
-            --danger: #ef4444;
-            --danger-bg: #fef2f2;
-            --warning: #f59e0b;
-            --warning-bg: #fffbeb;
-            --info: #3b82f6;
-            --info-bg: #eff6ff;
-            --radius: 10px;
-            --radius-sm: 6px;
-            --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
-            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.05);
-            --transition: 0.2s ease;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>API 全能力测试 · 毛玻璃黑白版</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    :root {
+      --glass-bg: rgba(20, 20, 20, 0.5);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --blur-amount: 16px;
+      --text-primary: #f0f0f0;
+      --text-secondary: #b0b0b0;
+      --text-muted: #888;
+      --surface-light: rgba(255, 255, 255, 0.06);
+      --surface-lighter: rgba(255, 255, 255, 0.1);
+      --accent: #ffffff;
+      --accent-dim: #cccccc;
+      --success: #7ee081;
+      --danger: #ff8a80;
+      --warning: #ffd54f;
+      --info: #90caf9;
+      --radius: 18px;
+      --radius-sm: 12px;
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: radial-gradient(ellipse at 20% 20%, #1a1a1a 0%, #0a0a0a 100%);
+      background-attachment: fixed;
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-        /* Header */
-        .header {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--shadow);
-        }
-        .header-inner {
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 0 24px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-sm);
-            background: linear-gradient(135deg, #4f6ef7, #7c5cfc);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            color: #fff;
-            flex-shrink: 0;
-        }
-        .header-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--text);
-            letter-spacing: -0.3px;
-        }
-        .header-subtitle {
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            margin-left: 2px;
-        }
-        .header-badge {
-            font-size: 0.7rem;
-            background: var(--primary-light);
-            color: var(--primary);
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-        }
+    /* 毛玻璃容器 */
+    .glass-panel {
+      background: var(--glass-bg);
+      backdrop-filter: blur(var(--blur-amount));
+      -webkit-backdrop-filter: blur(var(--blur-amount));
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      box-shadow: var(--glass-shadow);
+      transition: all var(--transition);
+    }
 
-        /* Main */
-        .main-container {
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+    .glass-panel:hover {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
 
-        /* Card */
-        .card {
-            background: var(--surface);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            overflow: hidden;
-        }
-        .card-header {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border);
-            background: var(--surface-alt);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .card-header-title {
-            font-weight: 700;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text);
-        }
-        .card-header-title .icon-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--primary);
-            flex-shrink: 0;
-        }
-        .card-body {
-            padding: 20px;
-        }
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
 
-        /* Form */
-        .form-row {
-            display: flex;
-            gap: 14px;
-            flex-wrap: wrap;
-            align-items: flex-end;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            flex: 1;
-            min-width: 200px;
-        }
-        .form-group label {
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            letter-spacing: 0.2px;
-        }
-        .form-group input {
-            padding: 10px 14px;
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius-sm);
-            font-size: 0.9rem;
-            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
-            transition: all var(--transition);
-            background: var(--surface);
-            color: var(--text);
-            width: 100%;
-        }
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 110, 247, 0.1);
-        }
-        .form-group input::placeholder {
-            color: var(--text-muted);
-            font-family: inherit;
-        }
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 1.2rem 1.8rem;
+      backdrop-filter: blur(18px);
+      background: rgba(15, 15, 15, 0.55);
+    }
 
-        /* Buttons */
-        .btn {
-            padding: 10px 18px;
-            border-radius: var(--radius-sm);
-            font-size: 0.88rem;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: all var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            white-space: nowrap;
-            letter-spacing: 0.2px;
-            font-family: inherit;
-        }
-        .btn-primary {
-            background: var(--primary);
-            color: #fff;
-        }
-        .btn-primary:hover {
-            background: var(--primary-hover);
-            box-shadow: var(--shadow-md);
-            transform: translateY(-1px);
-        }
-        .btn-primary:active {
-            transform: translateY(0);
-            box-shadow: var(--shadow);
-        }
-        .btn-primary:disabled {
-            background: #b0b8d0;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        .btn-outline {
-            background: var(--surface);
-            color: var(--text);
-            border: 1.5px solid var(--border);
-        }
-        .btn-outline:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            background: var(--primary-light);
-        }
-        .btn-outline:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .btn-danger {
-            background: var(--danger);
-            color: #fff;
-        }
-        .btn-danger:hover {
-            background: #dc2626;
-            box-shadow: var(--shadow-md);
-        }
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 0.78rem;
-            border-radius: 4px;
-        }
-        .btn-xs {
-            padding: 3px 9px;
-            font-size: 0.7rem;
-            border-radius: 3px;
-            font-weight: 500;
-        }
-        .btn-icon {
-            width: 32px;
-            height: 32px;
-            padding: 0;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border: 1.5px solid var(--border);
-            background: var(--surface);
-            cursor: pointer;
-            transition: all var(--transition);
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-        .btn-icon:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            background: var(--primary-light);
-        }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
 
-        /* Tags */
-        .tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.76rem;
-            font-weight: 600;
-            letter-spacing: 0.2px;
-            cursor: pointer;
-            transition: all var(--transition);
-            border: 1.5px solid var(--border);
-            background: var(--surface);
-            color: var(--text-secondary);
-            user-select: none;
-        }
-        .tag.selected {
-            background: var(--primary-light);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-        .tag:hover {
-            border-color: var(--primary);
-            background: var(--primary-light);
-        }
-        .tag .tag-check {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            border: 1.5px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 9px;
-            transition: all var(--transition);
-            flex-shrink: 0;
-        }
-        .tag.selected .tag-check {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: #fff;
-        }
-        .models-scroll {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            max-height: 180px;
-            overflow-y: auto;
-            padding: 4px 0;
-        }
-        .models-scroll::-webkit-scrollbar {
-            width: 5px;
-        }
-        .models-scroll::-webkit-scrollbar-thumb {
-            background: #d0d5dd;
-            border-radius: 10px;
-        }
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
 
-        /* Progress */
-        .progress-bar-outer {
-            height: 8px;
-            background: #e8eaef;
-            border-radius: 10px;
-            overflow: hidden;
-            flex: 1;
-            min-width: 100px;
-        }
-        .progress-bar-inner {
-            height: 100%;
-            background: linear-gradient(90deg, #4f6ef7, #7c5cfc);
-            border-radius: 10px;
-            transition: width 0.4s ease;
-            width: 0%;
-        }
-        .progress-text {
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            white-space: nowrap;
-            min-width: 60px;
-            text-align: right;
-        }
+    .logo-text h1 {
+      font-weight: 600;
+      font-size: 1.25rem;
+      letter-spacing: -0.3px;
+      color: var(--text-primary);
+    }
 
-        /* Status badges */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.73rem;
-            font-weight: 600;
-            letter-spacing: 0.2px;
-        }
-        .status-pass {
-            background: var(--success-bg);
-            color: #15803d;
-        }
-        .status-fail {
-            background: var(--danger-bg);
-            color: #b91c1c;
-        }
-        .status-warn {
-            background: var(--warning-bg);
-            color: #92400e;
-        }
-        .status-pending {
-            background: #f8f9fa;
-            color: #8b9198;
-        }
-        .status-running {
-            background: #eff6ff;
-            color: #1d4ed8;
-            animation: pulse-dot 1.5s infinite;
-        }
+    .logo-text span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: block;
+      margin-top: 2px;
+    }
 
-        @keyframes pulse-dot {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
+    .badge {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 0.3rem 0.9rem;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.4px;
+      color: var(--text-secondary);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
 
-        /* Results table */
-        .results-table-wrap {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        .results-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.84rem;
-            min-width: 800px;
-        }
-        .results-table th,
-        .results-table td {
-            padding: 11px 14px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-            vertical-align: middle;
-        }
-        .results-table th {
-            background: var(--surface-alt);
-            font-weight: 700;
-            font-size: 0.76rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            position: sticky;
-            top: 0;
-            white-space: nowrap;
-        }
-        .results-table tbody tr {
-            transition: background var(--transition);
-        }
-        .results-table tbody tr:hover {
-            background: #fafbfc;
-        }
-        .results-table .model-name {
-            font-weight: 700;
-            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
-            font-size: 0.82rem;
-            color: var(--text);
-            word-break: break-all;
-        }
-        .time-cell {
-            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
-            font-size: 0.78rem;
-            color: var(--text-secondary);
-        }
-        .detail-cell {
-            max-width: 250px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            cursor: pointer;
-            color: var(--text-secondary);
-            font-size: 0.78rem;
-        }
-        .detail-cell:hover {
-            color: var(--primary);
-            text-decoration: underline;
-        }
+    /* Form */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 2fr 2fr auto;
+      gap: 1rem;
+      align-items: end;
+      padding: 1.8rem;
+    }
 
-        /* Expandable detail */
-        .detail-expanded {
-            background: var(--surface-alt);
-            border-radius: var(--radius-sm);
-            padding: 12px 16px;
-            margin-top: 6px;
-            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
-            font-size: 0.75rem;
-            white-space: pre-wrap;
-            word-break: break-all;
-            max-height: 200px;
-            overflow-y: auto;
-            color: var(--text-secondary);
-            border: 1px solid var(--border);
-        }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
 
-        /* Toast */
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            pointer-events: none;
-        }
-        .toast {
-            padding: 12px 18px;
-            border-radius: var(--radius-sm);
-            font-size: 0.84rem;
-            font-weight: 600;
-            color: #fff;
-            box-shadow: var(--shadow-lg);
-            animation: slideInRight 0.35s ease, fadeOut 0.3s ease 2.5s forwards;
-            pointer-events: auto;
-            max-width: 420px;
-            letter-spacing: 0.2px;
-        }
-        .toast-success {
-            background: #16a34a;
-        }
-        .toast-error {
-            background: #dc2626;
-        }
-        .toast-info {
-            background: #3b82f6;
-        }
+    .input-group label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
 
-        @keyframes slideInRight {
-            from {
-                transform: translateX(120%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        @keyframes fadeOut {
-            to {
-                opacity: 0;
-                transform: translateY(-8px);
-            }
-        }
+    .input-field {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
+      padding: 0.85rem 1rem;
+      font-size: 0.9rem;
+      color: #f0f0f0;
+      font-family: var(--font-mono);
+      transition: all var(--transition);
+      backdrop-filter: blur(4px);
+      width: 100%;
+    }
 
-        /* Spinner */
-        .spinner {
-            width: 18px;
-            height: 18px;
-            border: 2.5px solid #e0e3e8;
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-            display: inline-block;
-            flex-shrink: 0;
-        }
-        .spinner-sm {
-            width: 14px;
-            height: 14px;
-            border-width: 2px;
-        }
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+    .input-field:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.08);
+    }
 
-        /* Tooltip */
-        .info-tip {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #e8eaef;
-            font-size: 10px;
-            font-weight: 700;
-            cursor: help;
-            color: var(--text-muted);
-            transition: all var(--transition);
-        }
-        .info-tip:hover {
-            background: var(--primary);
-            color: #fff;
-        }
+    .input-field::placeholder {
+      color: #777;
+      font-family: inherit;
+    }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .form-row {
-                flex-direction: column;
-            }
-            .form-group {
-                min-width: 100%;
-            }
-            .header-inner {
-                padding: 0 14px;
-                gap: 8px;
-            }
-            .header-title {
-                font-size: 1rem;
-            }
-            .main-container {
-                padding: 12px;
-                gap: 14px;
-            }
-            .card-body {
-                padding: 14px;
-            }
-            .results-table th,
-            .results-table td {
-                padding: 8px 6px;
-                font-size: 0.7rem;
-            }
-            .btn {
-                padding: 8px 14px;
-                font-size: 0.8rem;
-            }
-            .models-scroll {
-                max-height: 140px;
-            }
-        }
+    /* Buttons */
+    .btn {
+      padding: 0.75rem 1.4rem;
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      color: #f0f0f0;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      font-family: inherit;
+    }
 
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-muted);
-        }
-        .empty-state .empty-icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-        }
-        .empty-state p {
-            font-size: 0.9rem;
-        }
+    .btn-primary {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
 
-        /* Summary cards */
-        .summary-row {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .summary-card {
-            flex: 1;
-            min-width: 130px;
-            background: var(--surface-alt);
-            border-radius: var(--radius-sm);
-            padding: 14px 16px;
-            text-align: center;
-            border: 1px solid var(--border);
-            transition: all var(--transition);
-        }
-        .summary-card .summary-num {
-            font-size: 1.8rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            line-height: 1;
-        }
-        .summary-card .summary-label {
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            margin-top: 4px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .summary-pass .summary-num {
-            color: #15803d;
-        }
-        .summary-fail .summary-num {
-            color: #b91c1c;
-        }
-        .summary-total .summary-num {
-            color: var(--text);
-        }
-    </style>
+    .btn-primary:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      filter: grayscale(30%);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+
+    .btn-outline:hover:not(:disabled) {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.5);
+    }
+
+    .btn-sm {
+      padding: 0.4rem 0.9rem;
+      font-size: 0.75rem;
+      border-radius: 10px;
+    }
+
+    .btn-xs {
+      padding: 0.2rem 0.6rem;
+      font-size: 0.7rem;
+      border-radius: 8px;
+    }
+
+    .btn-icon {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #ccc;
+      transition: all var(--transition);
+    }
+
+    .btn-icon:hover {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+    }
+
+    /* Model tags */
+    .model-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      padding: 1rem 1.8rem;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .model-tag {
+      padding: 0.45rem 1rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: #ccc;
+      cursor: pointer;
+      transition: 0.2s;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      backdrop-filter: blur(4px);
+    }
+
+    .model-tag.selected {
+      background: rgba(255,255,255,0.2);
+      border-color: rgba(255,255,255,0.5);
+      color: #fff;
+    }
+
+    .model-tag .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #666;
+      transition: 0.2s;
+    }
+
+    .model-tag.selected .dot {
+      background: #fff;
+      box-shadow: 0 0 8px #fff;
+    }
+
+    .action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 1.8rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    /* Progress */
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      flex: 1;
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #888, #ccc);
+      border-radius: 10px;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .progress-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      min-width: 70px;
+      text-align: right;
+      font-weight: 500;
+    }
+
+    /* Summary cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+      padding: 1rem 1.8rem;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #e0e0e0;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    /* Results table */
+    .table-container {
+      overflow-x: auto;
+      padding: 1rem 1.8rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      min-width: 900px;
+    }
+
+    .results-table th {
+      text-align: left;
+      padding: 0.7rem 0.8rem;
+      font-weight: 600;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #999;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      white-space: nowrap;
+    }
+
+    .results-table td {
+      padding: 0.7rem 0.8rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: #ccc;
+      vertical-align: middle;
+    }
+
+    .model-name-cell {
+      font-weight: 600;
+      color: #eee;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .status-pass { background: rgba(126, 224, 129, 0.15); color: #a5d6a7; }
+    .status-fail { background: rgba(255, 138, 128, 0.15); color: #ef9a9a; }
+    .status-warn { background: rgba(255, 213, 79, 0.1); color: #ffe082; }
+
+    .clickable {
+      cursor: pointer;
+      color: #bbb;
+      text-decoration: underline;
+      text-decoration-style: dotted;
+    }
+
+    .clickable:hover { color: #fff; }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .modal-content {
+      background: rgba(30,30,30,0.9);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 24px;
+      padding: 1.8rem;
+      max-width: 700px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      color: #ddd;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+    }
+
+    .modal-content pre {
+      background: rgba(0,0,0,0.5);
+      padding: 1rem;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      font-family: var(--font-mono);
+    }
+
+    .modal-close {
+      float: right;
+      background: none;
+      border: none;
+      color: #aaa;
+      font-size: 1.6rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Toast */
+    .toast-area {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+
+    .toast {
+      padding: 0.8rem 1.4rem;
+      border-radius: 14px;
+      background: rgba(20,20,20,0.8);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #eee;
+      font-size: 0.8rem;
+      font-weight: 500;
+      animation: slideIn 0.3s ease, fadeOutToast 0.3s 2.5s forwards;
+      pointer-events: auto;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(120%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes fadeOutToast {
+      to { opacity: 0; transform: translateY(-10px); }
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      body { padding: 0.8rem; }
+      .form-grid { grid-template-columns: 1fr; }
+      .header { padding: 1rem; }
+      .model-cloud { max-height: 180px; }
+      .results-table { font-size: 0.7rem; }
+      .btn { padding: 0.65rem 1.1rem; font-size: 0.8rem; }
+    }
+
+    @media (max-width: 500px) {
+      .action-row { flex-direction: column; align-items: stretch; }
+      .progress-wrap { width: 100%; }
+    }
+  </style>
 </head>
 <body>
-
+  <div class="container">
     <!-- Header -->
-    <div class="header">
-        <div class="header-inner">
-            <div class="logo-icon">⚡</div>
-            <span class="header-title">API 全能力测试工具</span>
-            <span class="header-subtitle">一次性验证非流式 · 流式 · 工具调用</span>
-            <span class="header-badge">OpenAI 兼容接口</span>
+    <div class="glass-panel header">
+      <div class="logo">
+        <div class="logo-icon">⚡</div>
+        <div class="logo-text">
+          <h1>API 全能力测试</h1>
+          <span>非流式 · 流式 · 工具调用</span>
         </div>
+      </div>
+      <div class="badge">OpenAI 兼容</div>
     </div>
 
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
-
-    <!-- Main -->
-    <div class="main-container">
-        <!-- Config Card -->
-        <div class="card" id="configCard">
-            <div class="card-header">
-                <span class="card-header-title"><span class="icon-dot"></span>接口配置</span>
-                <span style="font-size:0.75rem;color:var(--text-muted);">支持 OpenAI 兼容 API（如 OneAPI、FastGPT、vLLM 等）</span>
-            </div>
-            <div class="card-body">
-                <div class="form-row">
-                    <div class="form-group" style="flex:2;min-width:280px;">
-                        <label>🔗 API Base URL</label>
-                        <input type="text" id="apiUrl" placeholder="https://api.openai.com/v1"
-                        value="https://api.openai.com/v1">
-                    </div>
-                    <div class="form-group" style="flex:2;min-width:240px;">
-                        <label>🔑 API Key</label>
-                        <input type="password" id="apiKey" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx"
-                        autocomplete="off">
-                    </div>
-                    <div class="form-group" style="flex:0;min-width:auto;">
-                        <label>&nbsp;</label>
-                        <button class="btn btn-primary" id="btnFetchModels" onclick="fetchModels()">
-                            📋 获取模型列表
-                        </button>
-                    </div>
-                </div>
-            </div>
+    <!-- Config -->
+    <div class="glass-panel">
+      <div class="form-grid">
+        <div class="input-group">
+          <label>🔗 API Base URL</label>
+          <input class="input-field" id="apiUrl" placeholder="https://api.openai.com/v1" value="https://api.openai.com/v1">
         </div>
-
-        <!-- Models Card -->
-        <div class="card" id="modelsCard" style="display:none;">
-            <div class="card-header">
-                <span class="card-header-title"><span class="icon-dot"></span>模型列表 <span id="modelCountBadge" style="font-weight:400;color:var(--text-muted);"></span></span>
-                <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                    <button class="btn btn-outline btn-sm" onclick="selectAllModels()">全选</button>
-                    <button class="btn btn-outline btn-sm" onclick="deselectAllModels()">取消全选</button>
-                    <button class="btn btn-outline btn-sm" onclick="invertSelection()">反选</button>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="models-scroll" id="modelsContainer">
-                    <span style="color:var(--text-muted);font-size:0.84rem;">暂无模型数据，请先点击"获取模型列表"</span>
-                </div>
-            </div>
+        <div class="input-group">
+          <label>🔑 API Key</label>
+          <input class="input-field" type="password" id="apiKey" placeholder="sk-...">
         </div>
-
-        <!-- Test Control Card -->
-        <div class="card" id="testControlCard" style="display:none;">
-            <div class="card-header">
-                <span class="card-header-title"><span class="icon-dot"></span>测试控制</span>
-                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-                    <div class="progress-bar-outer" style="width:200px;">
-                        <div class="progress-bar-inner" id="progressBar" style="width:0%;"></div>
-                    </div>
-                    <span class="progress-text" id="progressLabel">就绪</span>
-                    <button class="btn btn-primary" id="btnStartTest" onclick="startAllTests()">
-                        🚀 开始测试
-                    </button>
-                    <button class="btn btn-danger btn-sm" id="btnStopTest" onclick="stopAllTests()" disabled>
-                        ⏹ 停止
-                    </button>
-                    <button class="btn btn-outline btn-sm" id="btnClearResults" onclick="clearResults()">
-                        🗑 清除结果
-                    </button>
-                </div>
-            </div>
-            <div class="card-body" style="padding:10px 20px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:0.78rem;color:var(--text-muted);">
-                <span>⏱ 超时设置：</span>
-                <input type="number" id="timeoutSeconds" value="45" min="5" max="300" step="5"
-                style="width:60px;padding:4px 8px;border:1.5px solid var(--border);border-radius:4px;text-align:center;font-size:0.82rem;">
-                <span>秒</span>
-                <span style="margin-left:8px;">并发数：</span>
-                <input type="number" id="concurrency" value="2" min="1" max="8" step="1"
-                style="width:50px;padding:4px 8px;border:1.5px solid var(--border);border-radius:4px;text-align:center;font-size:0.82rem;">
-                <span style="margin-left:8px;color:var(--text-muted);">（同时测试的模型数）</span>
-                <span class="info-tip" title="并发数过高可能导致 API 限流，建议 1-3">?</span>
-            </div>
-        </div>
-
-        <!-- Summary Card -->
-        <div class="card" id="summaryCard" style="display:none;">
-            <div class="card-header">
-                <span class="card-header-title"><span class="icon-dot"></span>测试汇总</span>
-            </div>
-            <div class="card-body">
-                <div class="summary-row" id="summaryRow">
-                    <div class="summary-card summary-total"><div class="summary-num" id="sumTotal">0</div><div class="summary-label">总测试项</div></div>
-                    <div class="summary-card summary-pass"><div class="summary-num" id="sumPass">0</div><div class="summary-label">✅ 通过</div></div>
-                    <div class="summary-card summary-fail"><div class="summary-num" id="sumFail">0</div><div class="summary-label">❌ 失败</div></div>
-                    <div class="summary-card" style="--c:#3b82f6;"><div class="summary-num" id="sumModels" style="color:#3b82f6;">0</div><div class="summary-label">涉及模型</div></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Results Card -->
-        <div class="card" id="resultsCard" style="display:none;">
-            <div class="card-header">
-                <span class="card-header-title"><span class="icon-dot"></span>详细结果</span>
-                <button class="btn btn-outline btn-sm" onclick="exportResults()">📥 导出结果</button>
-            </div>
-            <div class="card-body" style="padding:0;overflow-x:auto;">
-                <div class="results-table-wrap">
-                    <table class="results-table" id="resultsTable">
-                        <thead>
-                            <tr>
-                                <th>模型</th>
-                                <th>非流式</th>
-                                <th>耗时</th>
-                                <th>流式</th>
-                                <th>首字节</th>
-                                <th>总耗时</th>
-                                <th>工具调用</th>
-                                <th>耗时</th>
-                                <th>详情</th>
-                            </tr>
-                        </thead>
-                        <tbody id="resultsTableBody">
-                            <tr>
-                                <td colspan="9" style="text-align:center;padding:30px;color:var(--text-muted);">
-                                    暂无测试结果，请配置 API 并开始测试
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        <button class="btn btn-primary" id="btnFetchModels" onclick="fetchModels()">📋 获取模型</button>
+      </div>
     </div>
 
-    <script>
-        // ============ 全局状态 ============
-        const state = {
-            models: [], // [{id, selected}]
-            results: {}, // {modelId: {nonStream: {}, stream: {}, toolCall: {}}}
-            isRunning: false,
-            abortControllers: [],
-            totalTests: 0,
-            completedTests: 0,
-        };
+    <!-- Models -->
+    <div class="glass-panel" id="modelsCard" style="display:none;">
+      <div class="action-row">
+        <span style="font-weight:500;color:#ccc;" id="modelCountLabel">模型列表</span>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <button class="btn btn-outline btn-sm" onclick="selectAllModels()">全选</button>
+          <button class="btn btn-outline btn-sm" onclick="deselectAllModels()">取消</button>
+          <button class="btn btn-outline btn-sm" onclick="invertSelection()">反选</button>
+        </div>
+      </div>
+      <div class="model-cloud" id="modelsContainer"></div>
+    </div>
 
-        // ============ DOM 引用 ============
-        const $ = (sel) => document.querySelector(sel);
-        const $$ = (sel) => document.querySelectorAll(sel);
+    <!-- Control -->
+    <div class="glass-panel" id="testControlCard" style="display:none;">
+      <div class="action-row">
+        <div class="progress-wrap">
+          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+          <span class="progress-label" id="progressLabel">就绪</span>
+        </div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <button class="btn btn-primary" id="btnStart" onclick="startAllTests()">🚀 开始测试</button>
+          <button class="btn btn-outline btn-sm" id="btnStop" onclick="stopAllTests()" disabled>⏹️ 停止</button>
+          <button class="btn btn-outline btn-sm" onclick="clearResults()">🗑️ 清除</button>
+        </div>
+      </div>
+      <div style="padding:0.5rem 1.8rem;display:flex;gap:1.5rem;font-size:0.75rem;color:#aaa;flex-wrap:wrap;">
+        <span>⏱ 超时 <input class="input-field" id="timeoutSec" type="number" value="45" min="5" style="width:60px;padding:0.3rem;text-align:center;"> 秒</span>
+        <span>⚡ 并发 <input class="input-field" id="concurrency" type="number" value="2" min="1" max="8" style="width:50px;padding:0.3rem;text-align:center;"></span>
+      </div>
+    </div>
 
-        const apiUrlInput = $('#apiUrl');
-        const apiKeyInput = $('#apiKey');
-        const modelsContainer = $('#modelsContainer');
-        const modelsCard = $('#modelsCard');
-        const testControlCard = $('#testControlCard');
-        const summaryCard = $('#summaryCard');
-        const resultsCard = $('#resultsCard');
-        const resultsTableBody = $('#resultsTableBody');
-        const progressBar = $('#progressBar');
-        const progressLabel = $('#progressLabel');
-        const btnStartTest = $('#btnStartTest');
-        const btnStopTest = $('#btnStopTest');
-        const btnClearResults = $('#btnClearResults');
-        const btnFetchModels = $('#btnFetchModels');
-        const toastContainer = $('#toastContainer');
-        const modelCountBadge = $('#modelCountBadge');
+    <!-- Summary -->
+    <div class="glass-panel" id="summaryCard" style="display:none;">
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-value" id="sumTotal">0</div><div class="stat-label">总测试</div></div>
+        <div class="stat-card"><div class="stat-value" id="sumPass" style="color:#a5d6a7;">0</div><div class="stat-label">通过</div></div>
+        <div class="stat-card"><div class="stat-value" id="sumFail" style="color:#ef9a9a;">0</div><div class="stat-label">失败</div></div>
+        <div class="stat-card"><div class="stat-value" id="sumModels" style="color:#eee;">0</div><div class="stat-label">模型</div></div>
+      </div>
+    </div>
 
-        // ============ 工具函数 ============
-        function normalizeBaseUrl(url) {
-            let u = url.trim().replace(/\/+$/, '');
-            if (!u.endsWith('/v1')) {
-                if (u.includes('/v1/') || u.endsWith('/v1')) {
-                    // already has /v1, just clean trailing slash
-                    u = u.replace(/\/+$/, '');
-                } else {
-                    u += '/v1';
-                }
+    <!-- Results -->
+    <div class="glass-panel" id="resultsCard" style="display:none;">
+      <div class="table-container">
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>模型</th>
+              <th>非流式</th>
+              <th>耗时</th>
+              <th>Token</th>
+              <th>流式</th>
+              <th>首字节</th>
+              <th>总耗时</th>
+              <th>工具调用</th>
+              <th>耗时</th>
+              <th>详情</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div class="toast-area" id="toastArea"></div>
+
+  <script>
+    (function() {
+      // 状态
+      const state = {
+        models: [],
+        results: {},
+        running: false,
+        totalTests: 0,
+        completed: 0
+      };
+
+      // DOM 工具
+      const $ = (s) => document.querySelector(s);
+      const $$ = (s) => document.querySelectorAll(s);
+
+      // 元素
+      const apiUrlInp = $('#apiUrl');
+      const apiKeyInp = $('#apiKey');
+      const modelsCard = $('#modelsCard');
+      const modelsContainer = $('#modelsContainer');
+      const modelCountLabel = $('#modelCountLabel');
+      const testControlCard = $('#testControlCard');
+      const progressFill = $('#progressFill');
+      const progressLabel = $('#progressLabel');
+      const btnStart = $('#btnStart');
+      const btnStop = $('#btnStop');
+      const summaryCard = $('#summaryCard');
+      const resultsCard = $('#resultsCard');
+      const resultsBody = $('#resultsBody');
+      const sumTotal = $('#sumTotal');
+      const sumPass = $('#sumPass');
+      const sumFail = $('#sumFail');
+      const sumModels = $('#sumModels');
+      const toastArea = $('#toastArea');
+      const timeoutSecInp = $('#timeoutSec');
+      const concurrencyInp = $('#concurrency');
+
+      function showToast(msg, type='info') {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = msg;
+        toastArea.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+      }
+
+      function normalizeUrl(url) {
+        let u = url.trim().replace(/\/+$/, '');
+        if (!u.endsWith('/v1')) u += '/v1';
+        return u;
+      }
+
+      async function fetchModels() {
+        const rawUrl = apiUrlInp.value.trim();
+        const key = apiKeyInp.value.trim();
+        if (!rawUrl || !key) return showToast('请输入URL和Key', 'error');
+        const base = normalizeUrl(rawUrl);
+        const btn = $('#btnFetchModels');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> 获取中';
+        try {
+          const resp = await fetch(base + '/models', {
+            headers: { 'Authorization': `Bearer ${key}` }
+          });
+          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+          const data = await resp.json();
+          let list = [];
+          if (data?.data) list = data.data.map(m => m.id || m);
+          else if (Array.isArray(data)) list = data.map(m => m.id || m);
+          state.models = [...new Set(list.filter(Boolean))].map(id => ({ id, selected: true }));
+          renderModelTags();
+          modelsCard.style.display = '';
+          testControlCard.style.display = '';
+          modelCountLabel.textContent = `模型列表 (${state.models.length})`;
+          showToast(`获取到 ${state.models.length} 个模型`, 'success');
+        } catch (e) {
+          showToast('获取失败: ' + e.message, 'error');
+        } finally {
+          btn.disabled = false;
+          btn.textContent = '📋 获取模型';
+        }
+      }
+
+      function renderModelTags() {
+        modelsContainer.innerHTML = state.models.map((m,i) => `
+          <div class="model-tag ${m.selected ? 'selected' : ''}" onclick="toggleModel(${i})">
+            <span class="dot"></span>${escapeHtml(m.id)}
+          </div>`).join('');
+      }
+
+      window.toggleModel = (i) => {
+        state.models[i].selected = !state.models[i].selected;
+        renderModelTags();
+      };
+      window.selectAllModels = () => { state.models.forEach(m => m.selected=true); renderModelTags(); };
+      window.deselectAllModels = () => { state.models.forEach(m => m.selected=false); renderModelTags(); };
+      window.invertSelection = () => { state.models.forEach(m => m.selected=!m.selected); renderModelTags(); };
+
+      function getSelected() { return state.models.filter(m=>m.selected).map(m=>m.id); }
+
+      function updateProgress() {
+        const pct = state.totalTests ? Math.round((state.completed/state.totalTests)*100) : 0;
+        progressFill.style.width = pct + '%';
+        progressLabel.textContent = `${state.completed}/${state.totalTests}`;
+      }
+
+      async function callNonStream(base, key, model, timeout) {
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeout*1000);
+        const start = performance.now();
+        try {
+          const resp = await fetch(base+'/chat/completions', {
+            method:'POST',
+            headers: {'Authorization':`Bearer ${key}`, 'Content-Type':'application/json'},
+            body: JSON.stringify({model, messages:[{role:'user',content:'你好，用一句话介绍自己'}], stream:false, max_tokens:100}),
+            signal: controller.signal
+          });
+          clearTimeout(id);
+          const elapsed = performance.now()-start;
+          if (!resp.ok) {
+            const errText = await resp.text().catch(()=>'');
+            return { success:false, elapsed, error:`${resp.status} ${resp.statusText}`, detail: errText };
+          }
+          const data = await resp.json();
+          const usage = data.usage || {};
+          return { success:true, elapsed, content: data.choices?.[0]?.message?.content, usage };
+        } catch(e) {
+          clearTimeout(id);
+          return { success:false, elapsed:performance.now()-start, error:e.name==='AbortError'?'超时':e.message };
+        }
+      }
+
+      async function callStream(base, key, model, timeout) {
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeout*1000);
+        const start = performance.now();
+        let firstByte = null, content='', chunks=0;
+        try {
+          const resp = await fetch(base+'/chat/completions', {
+            method:'POST',
+            headers: {'Authorization':`Bearer ${key}`, 'Content-Type':'application/json'},
+            body: JSON.stringify({model, messages:[{role:'user',content:'一句话介绍人工智能'}], stream:true, max_tokens:100}),
+            signal: controller.signal
+          });
+          if (!resp.ok) {
+            clearTimeout(id);
+            const errText = await resp.text().catch(()=>'');
+            return { success:false, elapsed:performance.now()-start, error:`${resp.status}`, detail:errText };
+          }
+          const reader = resp.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
+          while(true) {
+            const {done, value} = await reader.read();
+            if (done) break;
+            if (!firstByte) firstByte = performance.now()-start;
+            buffer += decoder.decode(value, {stream:true});
+            const lines = buffer.split('\n');
+            buffer = lines.pop();
+            for (const line of lines) {
+              if (!line.startsWith('data:')) continue;
+              const d = line.slice(5).trim();
+              if (d === '[DONE]') continue;
+              try { const j = JSON.parse(d); const c = j.choices?.[0]?.delta?.content; if(c) content+=c; chunks++; } catch{}
             }
-            return u;
+          }
+          clearTimeout(id);
+          return { success:true, elapsed:performance.now()-start, firstByte, content, chunks };
+        } catch(e) {
+          clearTimeout(id);
+          return { success:false, elapsed:performance.now()-start, firstByte, error:e.name==='AbortError'?'超时':e.message };
         }
+      }
 
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
-            toast.textContent = message;
-            toastContainer.appendChild(toast);
-            setTimeout(() => {
-                if (toast.parentNode) toast.remove();
-            }, 3000);
+      async function callTool(base, key, model, timeout) {
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeout*1000);
+        const start = performance.now();
+        try {
+          const resp = await fetch(base+'/chat/completions', {
+            method:'POST',
+            headers: {'Authorization':`Bearer ${key}`, 'Content-Type':'application/json'},
+            body: JSON.stringify({model, messages:[{role:'user',content:'北京天气如何？'}], tools:[{type:'function',function:{name:'get_weather',parameters:{type:'object',properties:{city:{type:'string'}},required:['city']}}}], tool_choice:'auto', stream:false}),
+            signal: controller.signal
+          });
+          clearTimeout(id);
+          const elapsed = performance.now()-start;
+          if (!resp.ok) {
+            const errText = await resp.text().catch(()=>'');
+            return { success:false, elapsed, error:`${resp.status}`, detail:errText };
+          }
+          const data = await resp.json();
+          const hasTools = !!data.choices?.[0]?.message?.tool_calls;
+          return { success:true, elapsed, hasTools, usage: data.usage, content: data.choices?.[0]?.message?.content };
+        } catch(e) {
+          clearTimeout(id);
+          return { success:false, elapsed:performance.now()-start, error:e.name==='AbortError'?'超时':e.message };
         }
+      }
 
-        function formatTime(ms) {
-            if (ms === null || ms === undefined || ms < 0) return '—';
-            if (ms < 1000) return Math.round(ms) + 'ms';
-            return (ms / 1000).toFixed(2) + 's';
+      function renderRow(model, res) {
+        const non = res.nonStream || {};
+        const str = res.stream || {};
+        const tool = res.toolCall || {};
+        const tokenInfo = non.usage ? `${non.usage.total_tokens||'?'} tokens` : '—';
+        const detailId = `detail-${model.replace(/[^a-zA-Z0-9]/g,'')}`;
+        return `
+          <tr>
+            <td class="model-name-cell">${escapeHtml(model)}</td>
+            <td>${non.success ? '<span class="status-badge status-pass">✔</span>' : '<span class="status-badge status-fail">✘</span>'}</td>
+            <td>${non.elapsed ? (non.elapsed/1000).toFixed(1)+'s' : '—'}</td>
+            <td>${tokenInfo}</td>
+            <td>${str.success ? '<span class="status-badge status-pass">✔</span>' : '<span class="status-badge status-fail">✘</span>'}</td>
+            <td>${str.firstByte ? (str.firstByte/1000).toFixed(2)+'s' : '—'}</td>
+            <td>${str.elapsed ? (str.elapsed/1000).toFixed(1)+'s' : '—'}</td>
+            <td>${tool.success ? (tool.hasTools ? '<span class="status-badge status-pass">✔ 工具</span>' : '<span class="status-badge status-warn">⚠ 无</span>') : '<span class="status-badge status-fail">✘</span>'}</td>
+            <td>${tool.elapsed ? (tool.elapsed/1000).toFixed(1)+'s' : '—'}</td>
+            <td><span class="clickable" onclick="showDetail('${escapeHtml(model)}')">🔍</span></td>
+          </tr>`;
+      }
+
+      window.showDetail = (model) => {
+        const res = state.results[model];
+        if (!res) return;
+        const detail = { model, nonStream: res.nonStream, stream: res.stream, toolCall: res.toolCall };
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        overlay.innerHTML = `
+          <div class="modal-content">
+            <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+            <h3 style="margin-top:0;">${escapeHtml(model)} 详情</h3>
+            <pre>${escapeHtml(JSON.stringify(detail, null, 2))}</pre>
+            <button class="btn btn-sm btn-outline" style="margin-top:1rem;" onclick="navigator.clipboard.writeText(\`${JSON.stringify(detail, null, 2).replace(/`/g,'\\`')}\`)">复制 JSON</button>
+          </div>`;
+        document.body.appendChild(overlay);
+        overlay.addEventListener('click', e => { if(e.target===overlay) overlay.remove(); });
+      };
+
+      function updateSummary() {
+        let total=0, pass=0, fail=0, models=new Set();
+        for (const [m, res] of Object.entries(state.results)) {
+          models.add(m);
+          for (const key of ['nonStream','stream','toolCall']) {
+            if (res[key]) { total++; res[key].success ? pass++ : fail++; }
+          }
         }
+        sumTotal.textContent = total;
+        sumPass.textContent = pass;
+        sumFail.textContent = fail;
+        sumModels.textContent = models.size;
+        if (total) summaryCard.style.display = '';
+      }
 
-        function truncate(str, maxLen = 80) {
-            if (!str) return '—';
-            if (str.length <= maxLen) return str;
-            return str.substring(0, maxLen) + '…';
+      async function startAllTests() {
+        if (state.running) return;
+        const selected = getSelected();
+        if (!selected.length) return showToast('请选择模型');
+        const base = normalizeUrl(apiUrlInp.value.trim());
+        const key = apiKeyInp.value.trim();
+        if (!base || !key) return showToast('配置不完整');
+        const timeout = parseInt(timeoutSecInp.value)||45;
+        const concurrency = parseInt(concurrencyInp.value)||2;
+
+        state.running = true;
+        state.results = {};
+        state.totalTests = selected.length*3;
+        state.completed = 0;
+        updateProgress();
+        btnStart.disabled = true;
+        btnStop.disabled = false;
+        resultsCard.style.display = '';
+        resultsBody.innerHTML = selected.map(m => renderRow(m, {})).join('');
+        updateSummary();
+
+        const queue = [...selected];
+        const workers = new Set();
+        async function process() {
+          while (queue.length && state.running) {
+            const model = queue.shift();
+            const p = (async () => {
+              const res = { nonStream: null, stream: null, toolCall: null };
+              res.nonStream = await callNonStream(base, key, model, timeout);
+              state.completed++; updateProgress(); state.results[model] = res; refreshRow(model);
+              if (!state.running) return;
+              res.stream = await callStream(base, key, model, timeout);
+              state.completed++; updateProgress(); state.results[model] = res; refreshRow(model);
+              if (!state.running) return;
+              res.toolCall = await callTool(base, key, model, timeout);
+              state.completed++; updateProgress(); state.results[model] = res; refreshRow(model);
+            })().finally(() => workers.delete(p));
+            workers.add(p);
+            if (workers.size >= concurrency) await Promise.race(workers);
+          }
+          await Promise.all(workers);
         }
-
-        function escapeHtml(str) {
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        }
-
-        // ============ Toast ============
-        function updateProgress() {
-            const total = state.totalTests;
-            const done = state.completedTests;
-            if (total > 0) {
-                const pct = Math.round((done / total) * 100);
-                progressBar.style.width = pct + '%';
-                progressLabel.textContent = `${done}/${total} (${pct}%)`;
-            } else {
-                progressBar.style.width = '0%';
-                progressLabel.textContent = '就绪';
-            }
-        }
-
-        function resetProgress() {
-            state.totalTests = 0;
-            state.completedTests = 0;
-            updateProgress();
-        }
-
-        // ============ 模型列表 ============
-        async function fetchModels() {
-            const rawUrl = apiUrlInput.value.trim();
-            const apiKey = apiKeyInput.value.trim();
-
-            if (!rawUrl) {
-                showToast('请输入 API Base URL', 'error');
-                return;
-            }
-            if (!apiKey) {
-                showToast('请输入 API Key', 'error');
-                return;
-            }
-
-            const baseUrl = normalizeBaseUrl(rawUrl);
-            const modelsUrl = baseUrl + '/models';
-
-            btnFetchModels.disabled = true;
-            btnFetchModels.innerHTML = '<span class="spinner spinner-sm"></span> 获取中…';
-            modelsContainer.innerHTML =
-                '<span style="color:var(--text-muted);">⏳ 正在获取模型列表…</span>';
-
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 20000);
-
-                const resp = await fetch(modelsUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`,
-                        'Content-Type': 'application/json',
-                    },
-                    signal: controller.signal,
-                });
-                clearTimeout(timeoutId);
-
-                if (!resp.ok) {
-                    const errText = await resp.text().catch(() => '无法读取错误信息');
-                    throw new Error(`HTTP ${resp.status}: ${truncate(errText, 150)}`);
-                }
-
-                const data = await resp.json();
-                let modelList = [];
-
-                if (data && Array.isArray(data.data)) {
-                    modelList = data.data.map(m => (typeof m === 'string' ? { id: m } : m));
-                } else if (data && Array.isArray(data)) {
-                    modelList = data.map(m => (typeof m === 'string' ? { id: m } : m));
-                } else {
-                    throw new Error('模型列表格式异常，期望 {data:[...]} 或数组');
-                }
-
-                if (modelList.length === 0) {
-                    throw new Error('模型列表为空');
-                }
-
-                // 去重并过滤
-                const seen = new Set();
-                state.models = [];
-                for (const m of modelList) {
-                    const mid = (m.id || '').trim();
-                    if (mid && !seen.has(mid)) {
-                        seen.add(mid);
-                        state.models.push({ id: mid, selected: true });
-                    }
-                }
-
-                renderModelTags();
-                modelsCard.style.display = '';
-                testControlCard.style.display = '';
-                modelCountBadge.textContent = `(${state.models.length} 个模型)`;
-                showToast(`成功获取 ${state.models.length} 个模型`, 'success');
-
-                // 清空旧结果
-                state.results = {};
-                renderResults();
-                summaryCard.style.display = 'none';
-                resetProgress();
-
-            } catch (err) {
-                let msg = err.message;
-                if (err.name === 'AbortError') msg = '请求超时（20秒）';
-                else if (msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
-                    msg = '网络错误，请检查 URL 是否正确、服务是否可达（可能是 CORS 或网络问题）';
-                }
-                showToast('获取模型失败: ' + msg, 'error');
-                modelsContainer.innerHTML =
-                    `<span style="color:var(--danger);">❌ 获取失败：${escapeHtml(msg)}</span>`;
-            } finally {
-                btnFetchModels.disabled = false;
-                btnFetchModels.textContent = '📋 获取模型列表';
-            }
-        }
-
-        function renderModelTags() {
-            if (state.models.length === 0) {
-                modelsContainer.innerHTML =
-                    '<span style="color:var(--text-muted);font-size:0.84rem;">暂无模型数据</span>';
-                return;
-            }
-            modelsContainer.innerHTML = state.models
-                .map(
-                    (m, i) => `
-                <span class="tag ${m.selected ? 'selected' : ''}" onclick="toggleModel(${i})" title="${escapeHtml(m.id)}">
-                    <span class="tag-check">${m.selected ? '✓' : ''}</span>
-                    ${escapeHtml(m.id)}
-                </span>`
-                )
-                .join('');
-        }
-
-        function toggleModel(index) {
-            state.models[index].selected = !state.models[index].selected;
-            renderModelTags();
-        }
-
-        function selectAllModels() {
-            state.models.forEach(m => (m.selected = true));
-            renderModelTags();
-        }
-
-        function deselectAllModels() {
-            state.models.forEach(m => (m.selected = false));
-            renderModelTags();
-        }
-
-        function invertSelection() {
-            state.models.forEach(m => (m.selected = !m.selected));
-            renderModelTags();
-        }
-
-        function getSelectedModels() {
-            return state.models.filter(m => m.selected).map(m => m.id);
-        }
-
-        // ============ API 调用 ============
-        async function callNonStream(baseUrl, apiKey, model, timeoutSec) {
-            const url = baseUrl + '/chat/completions';
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), timeoutSec * 1000);
-
-            const startTime = performance.now();
-            let resp, data;
-            try {
-                resp = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        model: model,
-                        messages: [
-                            { role: 'user', content: '你好，请用一句话介绍你自己。' }
-                        ],
-                        stream: false,
-                        max_tokens: 200,
-                    }),
-                    signal: controller.signal,
-                });
-                clearTimeout(timeoutId);
-                const elapsed = Math.round(performance.now() - startTime);
-
-                if (!resp.ok) {
-                    const errText = await resp.text().catch(() => '');
-                    return {
-                        success: false,
-                        elapsed,
-                        error: `HTTP ${resp.status}: ${truncate(errText, 120)}`,
-                        content: null,
-                    };
-                }
-
-                data = await resp.json();
-                const elapsed2 = Math.round(performance.now() - startTime);
-
-                const content = data?.choices?.[0]?.message?.content || '';
-                return {
-                    success: true,
-                    elapsed: elapsed2,
-                    content: content,
-                    rawSnippet: truncate(JSON.stringify(data), 300),
-                };
-            } catch (err) {
-                clearTimeout(timeoutId);
-                const elapsed = Math.round(performance.now() - startTime);
-                if (err.name === 'AbortError') {
-                    return { success: false, elapsed, error: `请求超时 (${timeoutSec}s)`, content: null };
-                }
-                return { success: false, elapsed, error: err.message, content: null };
-            }
-        }
-
-        async function callStream(baseUrl, apiKey, model, timeoutSec) {
-            const url = baseUrl + '/chat/completions';
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), timeoutSec * 1000);
-
-            const startTime = performance.now();
-            let firstByteTime = null;
-            let lastByteTime = null;
-            let fullContent = '';
-            let chunksReceived = 0;
-            let receivedDone = false;
-            let errorMsg = null;
-
-            try {
-                const resp = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        model: model,
-                        messages: [
-                            { role: 'user', content: '请用一句话介绍人工智能。' }
-                        ],
-                        stream: true,
-                        max_tokens: 200,
-                    }),
-                    signal: controller.signal,
-                });
-
-                if (!resp.ok) {
-                    clearTimeout(timeoutId);
-                    const errText = await resp.text().catch(() => '');
-                    const elapsed = Math.round(performance.now() - startTime);
-                    return {
-                        success: false,
-                        elapsed,
-                        firstByteTime: null,
-                        error: `HTTP ${resp.status}: ${truncate(errText, 120)}`,
-                        content: null,
-                        chunksReceived: 0,
-                        receivedDone: false,
-                    };
-                }
-
-                const reader = resp.body.getReader();
-                const decoder = new TextDecoder();
-                let buffer = '';
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    if (!firstByteTime) {
-                        firstByteTime = Math.round(performance.now() - startTime);
-                    }
-                    lastByteTime = Math.round(performance.now() - startTime);
-
-                    buffer += decoder.decode(value, { stream: true });
-                    const lines = buffer.split('\n');
-                    buffer = lines.pop() || '';
-
-                    for (const line of lines) {
-                        const trimmed = line.trim();
-                        if (!trimmed || !trimmed.startsWith('data:')) continue;
-                        const dataStr = trimmed.substring(5).trim();
-                        if (dataStr === '[DONE]') {
-                            receivedDone = true;
-                            continue;
-                        }
-                        try {
-                            const chunk = JSON.parse(dataStr);
-                            chunksReceived++;
-                            const delta = chunk?.choices?.[0]?.delta;
-                            if (delta?.content) {
-                                fullContent += delta.content;
-                            }
-                        } catch (e) {
-                            // 忽略解析错误
-                        }
-                    }
-                }
-                // 处理剩余buffer
-                if (buffer.trim()) {
-                    const trimmed = buffer.trim();
-                    if (trimmed.startsWith('data:') && trimmed.substring(5).trim() === '[DONE]') {
-                        receivedDone = true;
-                    }
-                }
-
-                clearTimeout(timeoutId);
-                const totalElapsed = Math.round(performance.now() - startTime);
-
-                return {
-                    success: true,
-                    elapsed: totalElapsed,
-                    firstByteTime: firstByteTime,
-                    content: fullContent,
-                    chunksReceived,
-                    receivedDone,
-                };
-            } catch (err) {
-                clearTimeout(timeoutId);
-                const elapsed = Math.round(performance.now() - startTime);
-                if (err.name === 'AbortError') {
-                    return {
-                        success: false,
-                        elapsed,
-                        firstByteTime,
-                        error: `请求超时 (${timeoutSec}s)`,
-                        content: fullContent || null,
-                        chunksReceived,
-                        receivedDone,
-                    };
-                }
-                return {
-                    success: false,
-                    elapsed,
-                    firstByteTime,
-                    error: err.message,
-                    content: fullContent || null,
-                    chunksReceived,
-                    receivedDone,
-                };
-            }
-        }
-
-        async function callToolCall(baseUrl, apiKey, model, timeoutSec) {
-            const url = baseUrl + '/chat/completions';
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), timeoutSec * 1000);
-
-            const tools = [{
-                type: 'function',
-                function: {
-                    name: 'get_weather',
-                    description: '获取指定城市的天气信息',
-                    parameters: {
-                        type: 'object',
-                        properties: {
-                            city: {
-                                type: 'string',
-                                description: '城市名称，如北京、巴黎'
-                            },
-                            unit: {
-                                type: 'string',
-                                enum: ['celsius', 'fahrenheit'],
-                                description: '温度单位'
-                            },
-                        },
-                        required: ['city'],
-                    },
-                },
-            }];
-
-            const startTime = performance.now();
-            let resp, data;
-            try {
-                resp = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        model: model,
-                        messages: [
-                            { role: 'user', content: '今天北京的天气怎么样？请用摄氏温度。' }
-                        ],
-                        tools: tools,
-                        tool_choice: 'auto',
-                        stream: false,
-                        max_tokens: 300,
-                    }),
-                    signal: controller.signal,
-                });
-                clearTimeout(timeoutId);
-                const elapsed = Math.round(performance.now() - startTime);
-
-                if (!resp.ok) {
-                    const errText = await resp.text().catch(() => '');
-                    return {
-                        success: false,
-                        elapsed,
-                        error: `HTTP ${resp.status}: ${truncate(errText, 120)}`,
-                        hasToolCalls: false,
-                        toolCallInfo: null,
-                        content: null,
-                    };
-                }
-
-                data = await resp.json();
-                const elapsed2 = Math.round(performance.now() - startTime);
-                const choice = data?.choices?.[0];
-                const message = choice?.message;
-                const toolCalls = message?.tool_calls;
-                const textContent = message?.content || '';
-
-                if (toolCalls && Array.isArray(toolCalls) && toolCalls.length > 0) {
-                    const tcInfo = toolCalls.map(tc => ({
-                        name: tc?.function?.name || 'unknown',
-                        args: tc?.function?.arguments || '{}',
-                    }));
-                    return {
-                        success: true,
-                        elapsed: elapsed2,
-                        hasToolCalls: true,
-                        toolCallInfo: tcInfo,
-                        content: textContent,
-                        rawSnippet: truncate(JSON.stringify(data), 400),
-                    };
-                } else {
-                    // 没有 tool_calls，但请求成功
-                    return {
-                        success: true,
-                        elapsed: elapsed2,
-                        hasToolCalls: false,
-                        toolCallInfo: null,
-                        content: textContent,
-                        note: '模型未返回 tool_calls（可能不支持工具调用，或选择用文本回复）',
-                        rawSnippet: truncate(JSON.stringify(data), 300),
-                    };
-                }
-            } catch (err) {
-                clearTimeout(timeoutId);
-                const elapsed = Math.round(performance.now() - startTime);
-                if (err.name === 'AbortError') {
-                    return {
-                        success: false,
-                        elapsed,
-                        error: `请求超时 (${timeoutSec}s)`,
-                        hasToolCalls: false,
-                        toolCallInfo: null,
-                        content: null,
-                    };
-                }
-                return {
-                    success: false,
-                    elapsed,
-                    error: err.message,
-                    hasToolCalls: false,
-                    toolCallInfo: null,
-                    content: null,
-                };
-            }
-        }
-
-        // ============ 测试执行 ============
-        async function runTestsForModel(baseUrl, apiKey, model, timeoutSec) {
-            const results = {
-                nonStream: null,
-                stream: null,
-                toolCall: null,
-            };
-
-            // 非流式测试
-            results.nonStream = await callNonStream(baseUrl, apiKey, model, timeoutSec);
-            state.completedTests++;
-            updateProgress();
-            updateModelResultRow(model, results);
-
-            // 检查是否被停止
-            if (!state.isRunning) return results;
-
-            // 流式测试
-            results.stream = await callStream(baseUrl, apiKey, model, timeoutSec);
-            state.completedTests++;
-            updateProgress();
-            updateModelResultRow(model, results);
-
-            // 检查是否被停止
-            if (!state.isRunning) return results;
-
-            // 工具调用测试
-            results.toolCall = await callToolCall(baseUrl, apiKey, model, timeoutSec);
-            state.completedTests++;
-            updateProgress();
-            updateModelResultRow(model, results);
-
-            return results;
-        }
-
-        function updateModelResultRow(model, results) {
-            state.results[model] = results;
-            renderSingleModelRow(model, results);
-            updateSummary();
-        }
-
-        async function startAllTests() {
-            if (state.isRunning) return;
-
-            const rawUrl = apiUrlInput.value.trim();
-            const apiKey = apiKeyInput.value.trim();
-            const timeoutSec = parseInt($('#timeoutSeconds').value) || 45;
-            const concurrency = parseInt($('#concurrency').value) || 2;
-
-            if (!rawUrl) { showToast('请输入 API Base URL', 'error'); return; }
-            if (!apiKey) { showToast('请输入 API Key', 'error'); return; }
-
-            const selectedModels = getSelectedModels();
-            if (selectedModels.length === 0) {
-                showToast('请至少选择一个模型', 'error');
-                return;
-            }
-
-            const baseUrl = normalizeBaseUrl(rawUrl);
-
-            // 初始化
-            state.isRunning = true;
-            state.abortControllers = [];
-            state.results = {};
-            state.totalTests = selectedModels.length * 3; // 每个模型3项测试
-            state.completedTests = 0;
-            updateProgress();
-
-            // 显示UI
-            resultsCard.style.display = '';
-            summaryCard.style.display = '';
-            btnStartTest.disabled = true;
-            btnStopTest.disabled = false;
-            btnFetchModels.disabled = true;
-            btnStartTest.innerHTML = '<span class="spinner spinner-sm"></span> 测试中…';
-
-            // 初始化所有行
-            resultsTableBody.innerHTML = selectedModels
-                .map(
-                    m => `
-                <tr id="row-${CSS.escape(m)}" data-model="${escapeHtml(m)}">
-                    <td class="model-name">${escapeHtml(m)}</td>
-                    <td><span class="status-badge status-pending">等待</span></td>
-                    <td class="time-cell">—</td>
-                    <td><span class="status-badge status-pending">等待</span></td>
-                    <td class="time-cell">—</td>
-                    <td class="time-cell">—</td>
-                    <td><span class="status-badge status-pending">等待</span></td>
-                    <td class="time-cell">—</td>
-                    <td class="detail-cell">—</td>
-                </tr>`
-                )
-                .join('');
-
-            updateSummary();
-
-            // 并发控制：使用队列
-            const queue = [...selectedModels];
-            const runningPromises = new Set();
-
-            async function processQueue() {
-                while (queue.length > 0 && state.isRunning) {
-                    const model = queue.shift();
-                    const promise = runTestsForModel(baseUrl, apiKey, model, timeoutSec).finally(() => {
-                        runningPromises.delete(promise);
-                    });
-                    runningPromises.add(promise);
-
-                    // 控制并发数
-                    if (runningPromises.size >= concurrency) {
-                        await Promise.race(runningPromises);
-                    }
-                }
-                // 等待剩余任务完成
-                await Promise.all(runningPromises);
-            }
-
-            try {
-                await processQueue();
-            } catch (err) {
-                console.error('测试过程出错:', err);
-            } finally {
-                // 完成
-                state.isRunning = false;
-                btnStartTest.disabled = false;
-                btnStopTest.disabled = true;
-                btnFetchModels.disabled = false;
-                btnStartTest.textContent = '🚀 开始测试';
-                updateProgress();
-                updateSummary();
-
-                const totalDone = state.completedTests;
-                const passCount = countPasses();
-                showToast(`测试完成！${totalDone} 项测试，${passCount} 项通过`, passCount === totalDone ? 'success' :
-                    'info');
-            }
-        }
-
-        function stopAllTests() {
-            state.isRunning = false;
-            // 中止所有进行中的请求
-            for (const ctrl of state.abortControllers) {
-                try { ctrl.abort(); } catch (e) {}
-            }
-            state.abortControllers = [];
-            btnStartTest.disabled = false;
-            btnStopTest.disabled = true;
-            btnFetchModels.disabled = false;
-            btnStartTest.textContent = '🚀 开始测试';
-            updateProgress();
-            showToast('已停止测试', 'info');
-        }
-
-        function countPasses() {
-            let count = 0;
-            for (const modelResults of Object.values(state.results)) {
-                if (modelResults.nonStream?.success) count++;
-                if (modelResults.stream?.success) count++;
-                if (modelResults.toolCall?.success) count++;
-            }
-            return count;
-        }
-
-        function updateSummary() {
-            let total = 0,
-                pass = 0,
-                fail = 0;
-            const modelsWithResults = new Set();
-            for (const [model, results] of Object.entries(state.results)) {
-                modelsWithResults.add(model);
-                if (results.nonStream) { total++;
-                    results.nonStream.success ? pass++ : fail++; }
-                if (results.stream) { total++;
-                    results.stream.success ? pass++ : fail++; }
-                if (results.toolCall) { total++;
-                    results.toolCall.success ? pass++ : fail++; }
-            }
-            $('#sumTotal').textContent = total;
-            $('#sumPass').textContent = pass;
-            $('#sumFail').textContent = fail;
-            $('#sumModels').textContent = modelsWithResults.size;
-            summaryCard.style.display = total > 0 ? '' : 'none';
-        }
-
-        function renderSingleModelRow(model, results) {
-            const row = document.getElementById(`row-${CSS.escape(model)}`);
-            if (!row) return;
-
-            const cells = row.querySelectorAll('td');
-            // cells[0] = model name
-            // cells[1] = nonStream status
-            // cells[2] = nonStream time
-            // cells[3] = stream status
-            // cells[4] = stream first byte
-            // cells[5] = stream total time
-            // cells[6] = toolCall status
-            // cells[7] = toolCall time
-            // cells[8] = detail
-
-            // 非流式
-            if (results.nonStream) {
-                const r = results.nonStream;
-                cells[1].innerHTML = r.success ?
-                    '<span class="status-badge status-pass">✅ 通过</span>' :
-                    '<span class="status-badge status-fail">❌ 失败</span>';
-                cells[2].textContent = formatTime(r.elapsed);
-            }
-
-            // 流式
-            if (results.stream) {
-                const r = results.stream;
-                cells[3].innerHTML = r.success ?
-                    '<span class="status-badge status-pass">✅ 通过</span>' :
-                    '<span class="status-badge status-fail">❌ 失败</span>';
-                cells[4].textContent = formatTime(r.firstByteTime);
-                cells[5].textContent = formatTime(r.elapsed);
-            }
-
-            // 工具调用
-            if (results.toolCall) {
-                const r = results.toolCall;
-                if (r.success && r.hasToolCalls) {
-                    cells[6].innerHTML = '<span class="status-badge status-pass">✅ 通过 (含ToolCall)</span>';
-                } else if (r.success && !r.hasToolCalls) {
-                    cells[6].innerHTML =
-                        '<span class="status-badge status-warn">⚠ 无ToolCall</span>';
-                } else {
-                    cells[6].innerHTML = '<span class="status-badge status-fail">❌ 失败</span>';
-                }
-                cells[7].textContent = formatTime(r.elapsed);
-            }
-
-            // 详情汇总
-            const detailParts = [];
-            if (results.nonStream?.error) detailParts.push('非流式: ' + results.nonStream.error);
-            if (results.stream?.error) detailParts.push('流式: ' + results.stream.error);
-            if (results.toolCall?.error) detailParts.push('工具: ' + results.toolCall.error);
-            if (results.toolCall?.note) detailParts.push('工具: ' + results.toolCall.note);
-            if (results.nonStream?.content && !results.nonStream?.error) {
-                detailParts.push('非流式回复: ' + truncate(results.nonStream.content, 40));
-            }
-            if (results.toolCall?.hasToolCalls && results.toolCall?.toolCallInfo) {
-                const tcNames = results.toolCall.toolCallInfo.map(t => t.name).join(', ');
-                detailParts.push('ToolCall: ' + tcNames);
-            }
-            cells[8].textContent = detailParts.length > 0 ? truncate(detailParts.join(' | '), 100) : '—';
-            cells[8].title = detailParts.join('\n');
-        }
-
-        function renderResults() {
-            if (Object.keys(state.results).length === 0) {
-                resultsTableBody.innerHTML =
-                    '<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text-muted);">暂无测试结果</td></tr>';
-                resultsCard.style.display = 'none';
-                summaryCard.style.display = 'none';
-                return;
-            }
-            resultsCard.style.display = '';
-            const allModels = Object.keys(state.results);
-            resultsTableBody.innerHTML = allModels
-                .map(m => {
-                    const r = state.results[m];
-                    return `
-                <tr id="row-${CSS.escape(m)}" data-model="${escapeHtml(m)}">
-                    <td class="model-name">${escapeHtml(m)}</td>
-                    <td>${r.nonStream ? (r.nonStream.success ? '<span class="status-badge status-pass">✅ 通过</span>' : '<span class="status-badge status-fail">❌ 失败</span>') : '<span class="status-badge status-pending">—</span>'}</td>
-                    <td class="time-cell">${formatTime(r.nonStream?.elapsed)}</td>
-                    <td>${r.stream ? (r.stream.success ? '<span class="status-badge status-pass">✅ 通过</span>' : '<span class="status-badge status-fail">❌ 失败</span>') : '<span class="status-badge status-pending">—</span>'}</td>
-                    <td class="time-cell">${formatTime(r.stream?.firstByteTime)}</td>
-                    <td class="time-cell">${formatTime(r.stream?.elapsed)}</td>
-                    <td>${r.toolCall ? (r.toolCall.success && r.toolCall.hasToolCalls ? '<span class="status-badge status-pass">✅ 通过</span>' : r.toolCall.success ? '<span class="status-badge status-warn">⚠ 无TC</span>' : '<span class="status-badge status-fail">❌ 失败</span>') : '<span class="status-badge status-pending">—</span>'}</td>
-                    <td class="time-cell">${formatTime(r.toolCall?.elapsed)}</td>
-                    <td class="detail-cell" title="点击查看详情" onclick="showDetail('${escapeHtml(m).replace(/'/g, "\\'")}')">🔍 查看</td>
-                </tr>`;
-                })
-                .join('');
-            updateSummary();
-        }
-
-        function showDetail(model) {
-            const results = state.results[model];
-            if (!results) return;
-
-            const detailData = {
-                model: model,
-                nonStream: results.nonStream,
-                stream: results.stream ? {
-                    success: results.stream.success,
-                    elapsed: results.stream.elapsed,
-                    firstByteTime: results.stream.firstByteTime,
-                    chunksReceived: results.stream.chunksReceived,
-                    receivedDone: results.stream.receivedDone,
-                    content: results.stream.content,
-                    error: results.stream.error,
-                } : null,
-                toolCall: results.toolCall ? {
-                    success: results.toolCall.success,
-                    elapsed: results.toolCall.elapsed,
-                    hasToolCalls: results.toolCall.hasToolCalls,
-                    toolCallInfo: results.toolCall.toolCallInfo,
-                    content: results.toolCall.content,
-                    error: results.toolCall.error,
-                    note: results.toolCall.note,
-                    rawSnippet: results.toolCall.rawSnippet,
-                } : null,
-            };
-
-            const detailStr = JSON.stringify(detailData, null, 2);
-
-            // 检查是否已有弹窗
-            const existingModal = document.querySelector('.detail-modal-overlay');
-            if (existingModal) existingModal.remove();
-
-            const overlay = document.createElement('div');
-            overlay.className = 'detail-modal-overlay';
-            overlay.style.cssText = `
-                position:fixed;top:0;left:0;width:100%;height:100%;
-                background:rgba(0,0,0,0.5);z-index:9998;
-                display:flex;align-items:center;justify-content:center;
-            `;
-            overlay.addEventListener('click', function(e) {
-                if (e.target === overlay) overlay.remove();
-            });
-
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                background:#fff;border-radius:12px;padding:24px;max-width:700px;
-                width:90%;max-height:80vh;overflow-y:auto;
-                box-shadow:0 20px 60px rgba(0,0,0,0.2);
-                position:relative;z-index:9999;
-            `;
-            modal.innerHTML = `
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                    <h3 style="margin:0;font-size:1rem;">📋 详情：${escapeHtml(model)}</h3>
-                    <button style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#8b9198;padding:0;line-height:1;"
-                        onclick="this.closest('.detail-modal-overlay').remove()">&times;</button>
-                </div>
-                <pre style="background:#f8f9fa;border-radius:8px;padding:16px;font-size:0.75rem;
-                font-family:'SF Mono','Consolas','Monaco',monospace;
-                white-space:pre-wrap;word-break:break-all;max-height:55vh;overflow-y:auto;
-                color:#1a1d23;line-height:1.5;">${escapeHtml(detailStr)}</pre>
-                <button class="btn btn-outline btn-sm" style="margin-top:12px;"
-                    onclick="navigator.clipboard.writeText(${JSON.stringify(detailStr)}).then(()=>{this.textContent='✅ 已复制';setTimeout(()=>{this.textContent='📋 复制JSON'},1500)}).catch(()=>{this.textContent='复制失败'})">
-                    📋 复制JSON
-                </button>
-            `;
-
-            overlay.appendChild(modal);
-            document.body.appendChild(overlay);
-
-            // ESC 关闭
-            const escHandler = (e) => {
-                if (e.key === 'Escape') {
-                    overlay.remove();
-                    document.removeEventListener('keydown', escHandler);
-                }
-            };
-            document.addEventListener('keydown', escHandler);
-        }
-
-        function clearResults() {
-            state.results = {};
-            state.totalTests = 0;
-            state.completedTests = 0;
-            updateProgress();
-            resultsTableBody.innerHTML =
-                '<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text-muted);">暂无测试结果</td></tr>';
-            resultsCard.style.display = 'none';
-            summaryCard.style.display = 'none';
-            progressBar.style.width = '0%';
-            progressLabel.textContent = '就绪';
-            showToast('结果已清除', 'info');
-        }
-
-        function exportResults() {
-            if (Object.keys(state.results).length === 0) {
-                showToast('没有可导出的结果', 'error');
-                return;
-            }
-            const exportData = {
-                exportTime: new Date().toISOString(),
-                baseUrl: normalizeBaseUrl(apiUrlInput.value.trim()),
-                results: state.results,
-            };
-            const jsonStr = JSON.stringify(exportData, null, 2);
-            const blob = new Blob([jsonStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `api-test-results-${Date.now()}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showToast('结果已导出', 'success');
-        }
-
-        // ============ 键盘快捷键 ============
-        document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                e.preventDefault();
-                if (state.isRunning) {
-                    stopAllTests();
-                } else {
-                    startAllTests();
-                }
-            }
-            if ((e.ctrlKey || e.metaKey) && e.key === 'm') {
-                e.preventDefault();
-                fetchModels();
-            }
-        });
-
-        // ============ 初始化提示 ============
-        console.log('🚀 API 全能力测试工具已就绪');
-        console.log('  快捷键: Ctrl+Enter = 开始/停止测试 | Ctrl+M = 获取模型列表');
-        console.log('  支持 OpenAI 兼容接口 (OneAPI, FastGPT, vLLM, Ollama 等)');
-        console.log('  测试项目: 非流式调用 | 流式调用 | 工具调用(Function Calling)');
-    </script>
+        try { await process(); } catch(e){}
+        state.running = false;
+        btnStart.disabled = false;
+        btnStop.disabled = true;
+        updateProgress();
+        updateSummary();
+        showToast('测试完成', 'success');
+      }
+
+      function refreshRow(model) {
+        const res = state.results[model];
+        if (!res) return;
+        const row = resultsBody.querySelector(`tr[data-model="${model.replace(/"/g,'&quot;')}"]`);
+        if (row) row.outerHTML = renderRow(model, res);
+        else resultsBody.insertAdjacentHTML('beforeend', renderRow(model, res));
+        updateSummary();
+      }
+
+      window.stopAllTests = () => { state.running = false; btnStop.disabled = true; btnStart.disabled = false; };
+
+      window.clearResults = () => {
+        state.results = {};
+        state.totalTests = 0;
+        state.completed = 0;
+        updateProgress();
+        resultsBody.innerHTML = '';
+        resultsCard.style.display = 'none';
+        summaryCard.style.display = 'none';
+      };
+
+      function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      window.fetchModels = fetchModels;
+      window.startAllTests = startAllTests;
+    })();
+  </script>
 </body>
 </html>
