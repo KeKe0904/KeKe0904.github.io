@@ -1,425 +1,1764 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>NONWASTE-敬请期待</title>
-  <style>
-    /* 全局重置与优化 */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 接口全能力测试工具</title>
+    <style>
+        :root {
+            --bg: #f0f2f5;
+            --surface: #ffffff;
+            --surface-alt: #f8f9fa;
+            --border: #e0e3e8;
+            --text: #1a1d23;
+            --text-secondary: #5f6368;
+            --text-muted: #8b9198;
+            --primary: #4f6ef7;
+            --primary-hover: #3b56e0;
+            --primary-light: #eef1fe;
+            --success: #22c55e;
+            --success-bg: #f0fdf6;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --info: #3b82f6;
+            --info-bg: #eff6ff;
+            --radius: 10px;
+            --radius-sm: 6px;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.05);
+            --transition: 0.2s ease;
+        }
 
-    body {
-      font-family: 'Inter', 'Helvetica Neue', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
-      min-height: 100vh;
-      background-color: #fafbf8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow-x: hidden;
-      /* 移动端优化字体渲染 */
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* ========== 响应式格子背景优化 ========== */
-    .grid-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
-      /* 主网格：默认48px，平板及以下缩小到36px，手机更小 */
-      background-image: 
-        linear-gradient(to right, rgba(180, 190, 170, 0.15) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(180, 190, 170, 0.15) 1px, transparent 1px);
-      background-size: 48px 48px;
-      transition: background-size 0.2s ease;
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
 
-    .grid-bg::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: 
-        linear-gradient(to right, rgba(190, 200, 180, 0.08) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(190, 200, 180, 0.08) 1px, transparent 1px);
-      background-size: 16px 16px;
-      pointer-events: none;
-      transition: background-size 0.2s ease;
-    }
+        /* Header */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+        .header-inner {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, #4f6ef7, #7c5cfc);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
+        .header-subtitle {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-left: 2px;
+        }
+        .header-badge {
+            font-size: 0.7rem;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
 
-    /* 平板及中等屏幕 (小于768px) 调整网格密度 */
-    @media (max-width: 768px) {
-      .grid-bg {
-        background-size: 36px 36px;
-      }
-      .grid-bg::after {
-        background-size: 12px 12px;
-      }
-    }
+        /* Main */
+        .main-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-    /* 手机横屏或小屏幕 (小于480px) 进一步调整网格，保持视觉清爽 */
-    @media (max-width: 480px) {
-      .grid-bg {
-        background-size: 28px 28px;
-      }
-      .grid-bg::after {
-        background-size: 10px 10px;
-      }
-    }
+        /* Card */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface-alt);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .card-header-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text);
+        }
+        .card-header-title .icon-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary);
+            flex-shrink: 0;
+        }
+        .card-body {
+            padding: 20px;
+        }
 
-    /* 极小屏幕 (小于360px) 微调 */
-    @media (max-width: 360px) {
-      .grid-bg {
-        background-size: 24px 24px;
-      }
-      .grid-bg::after {
-        background-size: 8px 8px;
-      }
-    }
+        /* Form */
+        .form-row {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex: 1;
+            min-width: 200px;
+        }
+        .form-group label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 0.2px;
+        }
+        .form-group input {
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+            transition: all var(--transition);
+            background: var(--surface);
+            color: var(--text);
+            width: 100%;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 110, 247, 0.1);
+        }
+        .form-group input::placeholder {
+            color: var(--text-muted);
+            font-family: inherit;
+        }
 
-    /* ========== 主卡片容器 ========== */
-    .container {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      max-width: 720px;
-      margin: 0 24px;
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(3px);
-      -webkit-backdrop-filter: blur(3px);
-      border-radius: 2px;
-      padding: 48px 32px 56px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.02), 0 1px 0 rgba(0, 0, 0, 0.02);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      border: 1px solid rgba(160, 170, 140, 0.15);
-      transition: padding 0.25s ease, margin 0.25s ease;
-    }
+        /* Buttons */
+        .btn {
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            white-space: nowrap;
+            letter-spacing: 0.2px;
+            font-family: inherit;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow);
+        }
+        .btn-primary:disabled {
+            background: #b0b8d0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .btn-outline {
+            background: var(--surface);
+            color: var(--text);
+            border: 1.5px solid var(--border);
+        }
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+        .btn-outline:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+            box-shadow: var(--shadow-md);
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.78rem;
+            border-radius: 4px;
+        }
+        .btn-xs {
+            padding: 3px 9px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .btn-icon:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
 
-    /* ========== 左上角Logo （响应式调整） ========== */
-    .logo-corner {
-      position: fixed;
-      top: 32px;
-      left: 36px;
-      z-index: 10;
-      font-size: 1.7rem;
-      font-weight: 550;
-      letter-spacing: 2px;
-      color: #3d4a38;
-      font-family: 'Inter', 'Helvetica Neue', 'Segoe UI', sans-serif;
-      text-transform: uppercase;
-      opacity: 0.85;
-      text-shadow: 0 1px 2px rgba(255,255,255,0.6);
-      line-height: 1;
-      background: transparent;
-      animation: fadeInDown 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-      transition: font-size 0.2s, top 0.2s, left 0.2s;
-    }
+        /* Tags */
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            cursor: pointer;
+            transition: all var(--transition);
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            color: var(--text-secondary);
+            user-select: none;
+        }
+        .tag.selected {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .tag:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+        .tag .tag-check {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            transition: all var(--transition);
+            flex-shrink: 0;
+        }
+        .tag.selected .tag-check {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+        .models-scroll {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+            padding: 4px 0;
+        }
+        .models-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+        .models-scroll::-webkit-scrollbar-thumb {
+            background: #d0d5dd;
+            border-radius: 10px;
+        }
 
-    /* 响应式Logo尺寸与位置 */
-    @media (max-width: 768px) {
-      .logo-corner {
-        top: 28px;
-        left: 28px;
-        font-size: 1.5rem;
-        letter-spacing: 1.8px;
-      }
-    }
+        /* Progress */
+        .progress-bar-outer {
+            height: 8px;
+            background: #e8eaef;
+            border-radius: 10px;
+            overflow: hidden;
+            flex: 1;
+            min-width: 100px;
+        }
+        .progress-bar-inner {
+            height: 100%;
+            background: linear-gradient(90deg, #4f6ef7, #7c5cfc);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+        .progress-text {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            min-width: 60px;
+            text-align: right;
+        }
 
-    @media (max-width: 480px) {
-      .logo-corner {
-        top: 20px;
-        left: 20px;
-        font-size: 1.3rem;
-        letter-spacing: 1.6px;
-      }
-    }
+        /* Status badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.73rem;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+        .status-pass {
+            background: var(--success-bg);
+            color: #15803d;
+        }
+        .status-fail {
+            background: var(--danger-bg);
+            color: #b91c1c;
+        }
+        .status-warn {
+            background: var(--warning-bg);
+            color: #92400e;
+        }
+        .status-pending {
+            background: #f8f9fa;
+            color: #8b9198;
+        }
+        .status-running {
+            background: #eff6ff;
+            color: #1d4ed8;
+            animation: pulse-dot 1.5s infinite;
+        }
 
-    @media (max-width: 380px) {
-      .logo-corner {
-        top: 16px;
-        left: 16px;
-        font-size: 1.2rem;
-      }
-    }
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
 
-    /* ========== 主标题“敬请期待”响应式字体 ========== */
-    .main-title {
-      font-size: clamp(3.2rem, 10vw, 5.2rem);
-      font-weight: 340;
-      letter-spacing: 0.02em;
-      color: #2b3428;
-      margin-bottom: 18px;
-      line-height: 1.15;
-      font-family: 'Inter', 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-      text-shadow: 0 1px 1px rgba(255,255,255,0.8);
-      opacity: 0;
-      animation: fadeInUp 0.9s cubic-bezier(0.23, 1, 0.32, 1) 0.15s forwards;
-      transition: font-size 0.2s ease;
-    }
+        /* Results table */
+        .results-table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.84rem;
+            min-width: 800px;
+        }
+        .results-table th,
+        .results-table td {
+            padding: 11px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+        .results-table th {
+            background: var(--surface-alt);
+            font-weight: 700;
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            position: sticky;
+            top: 0;
+            white-space: nowrap;
+        }
+        .results-table tbody tr {
+            transition: background var(--transition);
+        }
+        .results-table tbody tr:hover {
+            background: #fafbfc;
+        }
+        .results-table .model-name {
+            font-weight: 700;
+            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+            font-size: 0.82rem;
+            color: var(--text);
+            word-break: break-all;
+        }
+        .time-cell {
+            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+        }
+        .detail-cell {
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 0.78rem;
+        }
+        .detail-cell:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
 
-    /* 针对平板优化标题大小 */
-    @media (max-width: 768px) {
-      .main-title {
-        font-size: clamp(2.8rem, 12vw, 4.8rem);
-        margin-bottom: 14px;
-      }
-    }
+        /* Expandable detail */
+        .detail-expanded {
+            background: var(--surface-alt);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            margin-top: 6px;
+            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+            font-size: 0.75rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 200px;
+            overflow-y: auto;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
 
-    /* 手机端适当缩小但保持视觉冲击 */
-    @media (max-width: 480px) {
-      .main-title {
-        font-size: clamp(2.4rem, 13vw, 3.8rem);
-        margin-bottom: 12px;
-        letter-spacing: 0.01em;
-      }
-    }
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .toast {
+            padding: 12px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: #fff;
+            box-shadow: var(--shadow-lg);
+            animation: slideInRight 0.35s ease, fadeOut 0.3s ease 2.5s forwards;
+            pointer-events: auto;
+            max-width: 420px;
+            letter-spacing: 0.2px;
+        }
+        .toast-success {
+            background: #16a34a;
+        }
+        .toast-error {
+            background: #dc2626;
+        }
+        .toast-info {
+            background: #3b82f6;
+        }
 
-    /* ========== 英文辅助文字 ========== */
-    .sub-pending {
-      font-size: 1rem;
-      font-weight: 350;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: #6b7263;
-      margin-bottom: 36px;
-      border-bottom: 1px solid rgba(140, 150, 130, 0.25);
-      padding-bottom: 12px;
-      display: inline-block;
-      opacity: 0;
-      animation: fadeIn 0.8s ease-out 0.3s forwards;
-      transition: font-size 0.2s, letter-spacing 0.2s;
-    }
+        @keyframes slideInRight {
+            from {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+        }
 
-    @media (max-width: 480px) {
-      .sub-pending {
-        font-size: 0.85rem;
-        letter-spacing: 0.25em;
-        margin-bottom: 28px;
-        padding-bottom: 10px;
-      }
-    }
+        /* Spinner */
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2.5px solid #e0e3e8;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        .spinner-sm {
+            width: 14px;
+            height: 14px;
+            border-width: 2px;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
-    @media (max-width: 380px) {
-      .sub-pending {
-        font-size: 0.75rem;
-        letter-spacing: 0.2em;
-      }
-    }
+        /* Tooltip */
+        .info-tip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #e8eaef;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: help;
+            color: var(--text-muted);
+            transition: all var(--transition);
+        }
+        .info-tip:hover {
+            background: var(--primary);
+            color: #fff;
+        }
 
-    /* ========== 描述文字响应式 ========== */
-    .description {
-      font-size: 1.25rem;
-      font-weight: 320;
-      color: #4e5b44;
-      margin-top: 12px;
-      margin-bottom: 42px;
-      line-height: 1.6;
-      max-width: 360px;
-      letter-spacing: 0.02em;
-      opacity: 0;
-      animation: fadeInUp 0.9s cubic-bezier(0.23, 1, 0.32, 1) 0.4s forwards;
-      transition: font-size 0.2s, max-width 0.2s;
-    }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+            .form-group {
+                min-width: 100%;
+            }
+            .header-inner {
+                padding: 0 14px;
+                gap: 8px;
+            }
+            .header-title {
+                font-size: 1rem;
+            }
+            .main-container {
+                padding: 12px;
+                gap: 14px;
+            }
+            .card-body {
+                padding: 14px;
+            }
+            .results-table th,
+            .results-table td {
+                padding: 8px 6px;
+                font-size: 0.7rem;
+            }
+            .btn {
+                padding: 8px 14px;
+                font-size: 0.8rem;
+            }
+            .models-scroll {
+                max-height: 140px;
+            }
+        }
 
-    @media (max-width: 768px) {
-      .description {
-        font-size: 1.15rem;
-        max-width: 320px;
-        margin-bottom: 36px;
-      }
-    }
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+        .empty-state .empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .empty-state p {
+            font-size: 0.9rem;
+        }
 
-    @media (max-width: 480px) {
-      .description {
-        font-size: 1rem;
-        max-width: 280px;
-        margin-bottom: 32px;
-        line-height: 1.5;
-      }
-    }
-
-    @media (max-width: 380px) {
-      .description {
-        font-size: 0.9rem;
-        max-width: 250px;
-        margin-bottom: 28px;
-      }
-    }
-
-    /* ========== 装饰细线 ========== */
-    .ornament-line {
-      width: 50px;
-      height: 1px;
-      background: rgba(130, 140, 120, 0.3);
-      margin: 24px auto 8px;
-      opacity: 0;
-      animation: scaleLine 0.7s ease-out 0.55s forwards;
-    }
-
-    @media (max-width: 480px) {
-      .ornament-line {
-        width: 40px;
-        margin: 20px auto 6px;
-      }
-    }
-
-    /* ========== 底部版权区域 ========== */
-    .footer-note {
-      margin-top: 20px;
-      font-size: 0.8rem;
-      color: #8b9880;
-      letter-spacing: 0.04em;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      border-top: 1px solid rgba(160, 170, 140, 0.2);
-      padding-top: 28px;
-      width: 100%;
-      opacity: 0;
-      animation: fadeIn 0.8s ease-out 0.65s forwards;
-      transition: font-size 0.2s, padding-top 0.2s;
-    }
-
-    .copyright {
-      font-weight: 350;
-      opacity: 0.85;
-    }
-
-    @media (max-width: 480px) {
-      .footer-note {
-        font-size: 0.7rem;
-        padding-top: 22px;
-        margin-top: 16px;
-      }
-    }
-
-    @media (max-width: 380px) {
-      .footer-note {
-        font-size: 0.65rem;
-        padding-top: 18px;
-      }
-    }
-
-    /* 卡片内边距响应式微调 */
-    @media (max-width: 600px) {
-      .container {
-        padding: 40px 24px 48px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .container {
-        padding: 36px 20px 44px;
-        margin: 0 16px;
-      }
-    }
-
-    @media (max-width: 380px) {
-      .container {
-        padding: 32px 16px 40px;
-        margin: 0 12px;
-      }
-    }
-
-    /* ========== 动画关键帧 ========== */
-    @keyframes fadeInUp {
-      0% {
-        opacity: 0;
-        transform: translateY(18px);
-      }
-      100% {
-        opacity: 0.9;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes fadeInDown {
-      0% {
-        opacity: 0;
-        transform: translateY(-12px);
-      }
-      100% {
-        opacity: 0.85;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes fadeIn {
-      0% {
-        opacity: 0;
-      }
-      100% {
-        opacity: 0.8;
-      }
-    }
-
-    @keyframes scaleLine {
-      0% {
-        opacity: 0;
-        transform: scaleX(0);
-      }
-      100% {
-        opacity: 0.8;
-        transform: scaleX(1);
-      }
-    }
-
-    /* 针对 prefers-reduced-motion 的用户保留基础可见性 */
-    @media (prefers-reduced-motion: reduce) {
-      .logo-corner,
-      .main-title,
-      .sub-pending,
-      .description,
-      .ornament-line,
-      .footer-note {
-        animation: none;
-        opacity: 1;
-      }
-      .main-title,
-      .description {
-        opacity: 0.9;
-      }
-      .logo-corner {
-        opacity: 0.85;
-      }
-    }
-  </style>
+        /* Summary cards */
+        .summary-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .summary-card {
+            flex: 1;
+            min-width: 130px;
+            background: var(--surface-alt);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: all var(--transition);
+        }
+        .summary-card .summary-num {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1;
+        }
+        .summary-card .summary-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .summary-pass .summary-num {
+            color: #15803d;
+        }
+        .summary-fail .summary-num {
+            color: #b91c1c;
+        }
+        .summary-total .summary-num {
+            color: var(--text);
+        }
+    </style>
 </head>
 <body>
-  <!-- 浅格子衫线条背景层（响应式网格密度） -->
-  <div class="grid-bg" aria-hidden="true"></div>
 
-  <!-- 左上角固定的LOGO文字 -->
-  <div class="logo-corner">NONWASTE</div>
-
-  <!-- 核心内容卡片 -->
-  <main class="container">
-    <h1 class="main-title">敬请期待</h1>
-    
-    <div class="sub-pending">coming soon</div>
-    
-    <p class="description">我们正在为您准备一些特别的东西</p>
-    
-    <div class="ornament-line"></div>
-    
-    <div class="footer-note">
-      <span class="copyright">© 2026 NONWASTE. 版权所有.</span>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-inner">
+            <div class="logo-icon">⚡</div>
+            <span class="header-title">API 全能力测试工具</span>
+            <span class="header-subtitle">一次性验证非流式 · 流式 · 工具调用</span>
+            <span class="header-badge">OpenAI 兼容接口</span>
+        </div>
     </div>
-  </main>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Main -->
+    <div class="main-container">
+        <!-- Config Card -->
+        <div class="card" id="configCard">
+            <div class="card-header">
+                <span class="card-header-title"><span class="icon-dot"></span>接口配置</span>
+                <span style="font-size:0.75rem;color:var(--text-muted);">支持 OpenAI 兼容 API（如 OneAPI、FastGPT、vLLM 等）</span>
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group" style="flex:2;min-width:280px;">
+                        <label>🔗 API Base URL</label>
+                        <input type="text" id="apiUrl" placeholder="https://api.openai.com/v1"
+                        value="https://api.openai.com/v1">
+                    </div>
+                    <div class="form-group" style="flex:2;min-width:240px;">
+                        <label>🔑 API Key</label>
+                        <input type="password" id="apiKey" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx"
+                        autocomplete="off">
+                    </div>
+                    <div class="form-group" style="flex:0;min-width:auto;">
+                        <label>&nbsp;</label>
+                        <button class="btn btn-primary" id="btnFetchModels" onclick="fetchModels()">
+                            📋 获取模型列表
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Models Card -->
+        <div class="card" id="modelsCard" style="display:none;">
+            <div class="card-header">
+                <span class="card-header-title"><span class="icon-dot"></span>模型列表 <span id="modelCountBadge" style="font-weight:400;color:var(--text-muted);"></span></span>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button class="btn btn-outline btn-sm" onclick="selectAllModels()">全选</button>
+                    <button class="btn btn-outline btn-sm" onclick="deselectAllModels()">取消全选</button>
+                    <button class="btn btn-outline btn-sm" onclick="invertSelection()">反选</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="models-scroll" id="modelsContainer">
+                    <span style="color:var(--text-muted);font-size:0.84rem;">暂无模型数据，请先点击"获取模型列表"</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Control Card -->
+        <div class="card" id="testControlCard" style="display:none;">
+            <div class="card-header">
+                <span class="card-header-title"><span class="icon-dot"></span>测试控制</span>
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                    <div class="progress-bar-outer" style="width:200px;">
+                        <div class="progress-bar-inner" id="progressBar" style="width:0%;"></div>
+                    </div>
+                    <span class="progress-text" id="progressLabel">就绪</span>
+                    <button class="btn btn-primary" id="btnStartTest" onclick="startAllTests()">
+                        🚀 开始测试
+                    </button>
+                    <button class="btn btn-danger btn-sm" id="btnStopTest" onclick="stopAllTests()" disabled>
+                        ⏹ 停止
+                    </button>
+                    <button class="btn btn-outline btn-sm" id="btnClearResults" onclick="clearResults()">
+                        🗑 清除结果
+                    </button>
+                </div>
+            </div>
+            <div class="card-body" style="padding:10px 20px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:0.78rem;color:var(--text-muted);">
+                <span>⏱ 超时设置：</span>
+                <input type="number" id="timeoutSeconds" value="45" min="5" max="300" step="5"
+                style="width:60px;padding:4px 8px;border:1.5px solid var(--border);border-radius:4px;text-align:center;font-size:0.82rem;">
+                <span>秒</span>
+                <span style="margin-left:8px;">并发数：</span>
+                <input type="number" id="concurrency" value="2" min="1" max="8" step="1"
+                style="width:50px;padding:4px 8px;border:1.5px solid var(--border);border-radius:4px;text-align:center;font-size:0.82rem;">
+                <span style="margin-left:8px;color:var(--text-muted);">（同时测试的模型数）</span>
+                <span class="info-tip" title="并发数过高可能导致 API 限流，建议 1-3">?</span>
+            </div>
+        </div>
+
+        <!-- Summary Card -->
+        <div class="card" id="summaryCard" style="display:none;">
+            <div class="card-header">
+                <span class="card-header-title"><span class="icon-dot"></span>测试汇总</span>
+            </div>
+            <div class="card-body">
+                <div class="summary-row" id="summaryRow">
+                    <div class="summary-card summary-total"><div class="summary-num" id="sumTotal">0</div><div class="summary-label">总测试项</div></div>
+                    <div class="summary-card summary-pass"><div class="summary-num" id="sumPass">0</div><div class="summary-label">✅ 通过</div></div>
+                    <div class="summary-card summary-fail"><div class="summary-num" id="sumFail">0</div><div class="summary-label">❌ 失败</div></div>
+                    <div class="summary-card" style="--c:#3b82f6;"><div class="summary-num" id="sumModels" style="color:#3b82f6;">0</div><div class="summary-label">涉及模型</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Card -->
+        <div class="card" id="resultsCard" style="display:none;">
+            <div class="card-header">
+                <span class="card-header-title"><span class="icon-dot"></span>详细结果</span>
+                <button class="btn btn-outline btn-sm" onclick="exportResults()">📥 导出结果</button>
+            </div>
+            <div class="card-body" style="padding:0;overflow-x:auto;">
+                <div class="results-table-wrap">
+                    <table class="results-table" id="resultsTable">
+                        <thead>
+                            <tr>
+                                <th>模型</th>
+                                <th>非流式</th>
+                                <th>耗时</th>
+                                <th>流式</th>
+                                <th>首字节</th>
+                                <th>总耗时</th>
+                                <th>工具调用</th>
+                                <th>耗时</th>
+                                <th>详情</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                            <tr>
+                                <td colspan="9" style="text-align:center;padding:30px;color:var(--text-muted);">
+                                    暂无测试结果，请配置 API 并开始测试
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============ 全局状态 ============
+        const state = {
+            models: [], // [{id, selected}]
+            results: {}, // {modelId: {nonStream: {}, stream: {}, toolCall: {}}}
+            isRunning: false,
+            abortControllers: [],
+            totalTests: 0,
+            completedTests: 0,
+        };
+
+        // ============ DOM 引用 ============
+        const $ = (sel) => document.querySelector(sel);
+        const $$ = (sel) => document.querySelectorAll(sel);
+
+        const apiUrlInput = $('#apiUrl');
+        const apiKeyInput = $('#apiKey');
+        const modelsContainer = $('#modelsContainer');
+        const modelsCard = $('#modelsCard');
+        const testControlCard = $('#testControlCard');
+        const summaryCard = $('#summaryCard');
+        const resultsCard = $('#resultsCard');
+        const resultsTableBody = $('#resultsTableBody');
+        const progressBar = $('#progressBar');
+        const progressLabel = $('#progressLabel');
+        const btnStartTest = $('#btnStartTest');
+        const btnStopTest = $('#btnStopTest');
+        const btnClearResults = $('#btnClearResults');
+        const btnFetchModels = $('#btnFetchModels');
+        const toastContainer = $('#toastContainer');
+        const modelCountBadge = $('#modelCountBadge');
+
+        // ============ 工具函数 ============
+        function normalizeBaseUrl(url) {
+            let u = url.trim().replace(/\/+$/, '');
+            if (!u.endsWith('/v1')) {
+                if (u.includes('/v1/') || u.endsWith('/v1')) {
+                    // already has /v1, just clean trailing slash
+                    u = u.replace(/\/+$/, '');
+                } else {
+                    u += '/v1';
+                }
+            }
+            return u;
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            setTimeout(() => {
+                if (toast.parentNode) toast.remove();
+            }, 3000);
+        }
+
+        function formatTime(ms) {
+            if (ms === null || ms === undefined || ms < 0) return '—';
+            if (ms < 1000) return Math.round(ms) + 'ms';
+            return (ms / 1000).toFixed(2) + 's';
+        }
+
+        function truncate(str, maxLen = 80) {
+            if (!str) return '—';
+            if (str.length <= maxLen) return str;
+            return str.substring(0, maxLen) + '…';
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ============ Toast ============
+        function updateProgress() {
+            const total = state.totalTests;
+            const done = state.completedTests;
+            if (total > 0) {
+                const pct = Math.round((done / total) * 100);
+                progressBar.style.width = pct + '%';
+                progressLabel.textContent = `${done}/${total} (${pct}%)`;
+            } else {
+                progressBar.style.width = '0%';
+                progressLabel.textContent = '就绪';
+            }
+        }
+
+        function resetProgress() {
+            state.totalTests = 0;
+            state.completedTests = 0;
+            updateProgress();
+        }
+
+        // ============ 模型列表 ============
+        async function fetchModels() {
+            const rawUrl = apiUrlInput.value.trim();
+            const apiKey = apiKeyInput.value.trim();
+
+            if (!rawUrl) {
+                showToast('请输入 API Base URL', 'error');
+                return;
+            }
+            if (!apiKey) {
+                showToast('请输入 API Key', 'error');
+                return;
+            }
+
+            const baseUrl = normalizeBaseUrl(rawUrl);
+            const modelsUrl = baseUrl + '/models';
+
+            btnFetchModels.disabled = true;
+            btnFetchModels.innerHTML = '<span class="spinner spinner-sm"></span> 获取中…';
+            modelsContainer.innerHTML =
+                '<span style="color:var(--text-muted);">⏳ 正在获取模型列表…</span>';
+
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 20000);
+
+                const resp = await fetch(modelsUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json',
+                    },
+                    signal: controller.signal,
+                });
+                clearTimeout(timeoutId);
+
+                if (!resp.ok) {
+                    const errText = await resp.text().catch(() => '无法读取错误信息');
+                    throw new Error(`HTTP ${resp.status}: ${truncate(errText, 150)}`);
+                }
+
+                const data = await resp.json();
+                let modelList = [];
+
+                if (data && Array.isArray(data.data)) {
+                    modelList = data.data.map(m => (typeof m === 'string' ? { id: m } : m));
+                } else if (data && Array.isArray(data)) {
+                    modelList = data.map(m => (typeof m === 'string' ? { id: m } : m));
+                } else {
+                    throw new Error('模型列表格式异常，期望 {data:[...]} 或数组');
+                }
+
+                if (modelList.length === 0) {
+                    throw new Error('模型列表为空');
+                }
+
+                // 去重并过滤
+                const seen = new Set();
+                state.models = [];
+                for (const m of modelList) {
+                    const mid = (m.id || '').trim();
+                    if (mid && !seen.has(mid)) {
+                        seen.add(mid);
+                        state.models.push({ id: mid, selected: true });
+                    }
+                }
+
+                renderModelTags();
+                modelsCard.style.display = '';
+                testControlCard.style.display = '';
+                modelCountBadge.textContent = `(${state.models.length} 个模型)`;
+                showToast(`成功获取 ${state.models.length} 个模型`, 'success');
+
+                // 清空旧结果
+                state.results = {};
+                renderResults();
+                summaryCard.style.display = 'none';
+                resetProgress();
+
+            } catch (err) {
+                let msg = err.message;
+                if (err.name === 'AbortError') msg = '请求超时（20秒）';
+                else if (msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
+                    msg = '网络错误，请检查 URL 是否正确、服务是否可达（可能是 CORS 或网络问题）';
+                }
+                showToast('获取模型失败: ' + msg, 'error');
+                modelsContainer.innerHTML =
+                    `<span style="color:var(--danger);">❌ 获取失败：${escapeHtml(msg)}</span>`;
+            } finally {
+                btnFetchModels.disabled = false;
+                btnFetchModels.textContent = '📋 获取模型列表';
+            }
+        }
+
+        function renderModelTags() {
+            if (state.models.length === 0) {
+                modelsContainer.innerHTML =
+                    '<span style="color:var(--text-muted);font-size:0.84rem;">暂无模型数据</span>';
+                return;
+            }
+            modelsContainer.innerHTML = state.models
+                .map(
+                    (m, i) => `
+                <span class="tag ${m.selected ? 'selected' : ''}" onclick="toggleModel(${i})" title="${escapeHtml(m.id)}">
+                    <span class="tag-check">${m.selected ? '✓' : ''}</span>
+                    ${escapeHtml(m.id)}
+                </span>`
+                )
+                .join('');
+        }
+
+        function toggleModel(index) {
+            state.models[index].selected = !state.models[index].selected;
+            renderModelTags();
+        }
+
+        function selectAllModels() {
+            state.models.forEach(m => (m.selected = true));
+            renderModelTags();
+        }
+
+        function deselectAllModels() {
+            state.models.forEach(m => (m.selected = false));
+            renderModelTags();
+        }
+
+        function invertSelection() {
+            state.models.forEach(m => (m.selected = !m.selected));
+            renderModelTags();
+        }
+
+        function getSelectedModels() {
+            return state.models.filter(m => m.selected).map(m => m.id);
+        }
+
+        // ============ API 调用 ============
+        async function callNonStream(baseUrl, apiKey, model, timeoutSec) {
+            const url = baseUrl + '/chat/completions';
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeoutSec * 1000);
+
+            const startTime = performance.now();
+            let resp, data;
+            try {
+                resp = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: [
+                            { role: 'user', content: '你好，请用一句话介绍你自己。' }
+                        ],
+                        stream: false,
+                        max_tokens: 200,
+                    }),
+                    signal: controller.signal,
+                });
+                clearTimeout(timeoutId);
+                const elapsed = Math.round(performance.now() - startTime);
+
+                if (!resp.ok) {
+                    const errText = await resp.text().catch(() => '');
+                    return {
+                        success: false,
+                        elapsed,
+                        error: `HTTP ${resp.status}: ${truncate(errText, 120)}`,
+                        content: null,
+                    };
+                }
+
+                data = await resp.json();
+                const elapsed2 = Math.round(performance.now() - startTime);
+
+                const content = data?.choices?.[0]?.message?.content || '';
+                return {
+                    success: true,
+                    elapsed: elapsed2,
+                    content: content,
+                    rawSnippet: truncate(JSON.stringify(data), 300),
+                };
+            } catch (err) {
+                clearTimeout(timeoutId);
+                const elapsed = Math.round(performance.now() - startTime);
+                if (err.name === 'AbortError') {
+                    return { success: false, elapsed, error: `请求超时 (${timeoutSec}s)`, content: null };
+                }
+                return { success: false, elapsed, error: err.message, content: null };
+            }
+        }
+
+        async function callStream(baseUrl, apiKey, model, timeoutSec) {
+            const url = baseUrl + '/chat/completions';
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeoutSec * 1000);
+
+            const startTime = performance.now();
+            let firstByteTime = null;
+            let lastByteTime = null;
+            let fullContent = '';
+            let chunksReceived = 0;
+            let receivedDone = false;
+            let errorMsg = null;
+
+            try {
+                const resp = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: [
+                            { role: 'user', content: '请用一句话介绍人工智能。' }
+                        ],
+                        stream: true,
+                        max_tokens: 200,
+                    }),
+                    signal: controller.signal,
+                });
+
+                if (!resp.ok) {
+                    clearTimeout(timeoutId);
+                    const errText = await resp.text().catch(() => '');
+                    const elapsed = Math.round(performance.now() - startTime);
+                    return {
+                        success: false,
+                        elapsed,
+                        firstByteTime: null,
+                        error: `HTTP ${resp.status}: ${truncate(errText, 120)}`,
+                        content: null,
+                        chunksReceived: 0,
+                        receivedDone: false,
+                    };
+                }
+
+                const reader = resp.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    if (!firstByteTime) {
+                        firstByteTime = Math.round(performance.now() - startTime);
+                    }
+                    lastByteTime = Math.round(performance.now() - startTime);
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || '';
+
+                    for (const line of lines) {
+                        const trimmed = line.trim();
+                        if (!trimmed || !trimmed.startsWith('data:')) continue;
+                        const dataStr = trimmed.substring(5).trim();
+                        if (dataStr === '[DONE]') {
+                            receivedDone = true;
+                            continue;
+                        }
+                        try {
+                            const chunk = JSON.parse(dataStr);
+                            chunksReceived++;
+                            const delta = chunk?.choices?.[0]?.delta;
+                            if (delta?.content) {
+                                fullContent += delta.content;
+                            }
+                        } catch (e) {
+                            // 忽略解析错误
+                        }
+                    }
+                }
+                // 处理剩余buffer
+                if (buffer.trim()) {
+                    const trimmed = buffer.trim();
+                    if (trimmed.startsWith('data:') && trimmed.substring(5).trim() === '[DONE]') {
+                        receivedDone = true;
+                    }
+                }
+
+                clearTimeout(timeoutId);
+                const totalElapsed = Math.round(performance.now() - startTime);
+
+                return {
+                    success: true,
+                    elapsed: totalElapsed,
+                    firstByteTime: firstByteTime,
+                    content: fullContent,
+                    chunksReceived,
+                    receivedDone,
+                };
+            } catch (err) {
+                clearTimeout(timeoutId);
+                const elapsed = Math.round(performance.now() - startTime);
+                if (err.name === 'AbortError') {
+                    return {
+                        success: false,
+                        elapsed,
+                        firstByteTime,
+                        error: `请求超时 (${timeoutSec}s)`,
+                        content: fullContent || null,
+                        chunksReceived,
+                        receivedDone,
+                    };
+                }
+                return {
+                    success: false,
+                    elapsed,
+                    firstByteTime,
+                    error: err.message,
+                    content: fullContent || null,
+                    chunksReceived,
+                    receivedDone,
+                };
+            }
+        }
+
+        async function callToolCall(baseUrl, apiKey, model, timeoutSec) {
+            const url = baseUrl + '/chat/completions';
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeoutSec * 1000);
+
+            const tools = [{
+                type: 'function',
+                function: {
+                    name: 'get_weather',
+                    description: '获取指定城市的天气信息',
+                    parameters: {
+                        type: 'object',
+                        properties: {
+                            city: {
+                                type: 'string',
+                                description: '城市名称，如北京、巴黎'
+                            },
+                            unit: {
+                                type: 'string',
+                                enum: ['celsius', 'fahrenheit'],
+                                description: '温度单位'
+                            },
+                        },
+                        required: ['city'],
+                    },
+                },
+            }];
+
+            const startTime = performance.now();
+            let resp, data;
+            try {
+                resp = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: [
+                            { role: 'user', content: '今天北京的天气怎么样？请用摄氏温度。' }
+                        ],
+                        tools: tools,
+                        tool_choice: 'auto',
+                        stream: false,
+                        max_tokens: 300,
+                    }),
+                    signal: controller.signal,
+                });
+                clearTimeout(timeoutId);
+                const elapsed = Math.round(performance.now() - startTime);
+
+                if (!resp.ok) {
+                    const errText = await resp.text().catch(() => '');
+                    return {
+                        success: false,
+                        elapsed,
+                        error: `HTTP ${resp.status}: ${truncate(errText, 120)}`,
+                        hasToolCalls: false,
+                        toolCallInfo: null,
+                        content: null,
+                    };
+                }
+
+                data = await resp.json();
+                const elapsed2 = Math.round(performance.now() - startTime);
+                const choice = data?.choices?.[0];
+                const message = choice?.message;
+                const toolCalls = message?.tool_calls;
+                const textContent = message?.content || '';
+
+                if (toolCalls && Array.isArray(toolCalls) && toolCalls.length > 0) {
+                    const tcInfo = toolCalls.map(tc => ({
+                        name: tc?.function?.name || 'unknown',
+                        args: tc?.function?.arguments || '{}',
+                    }));
+                    return {
+                        success: true,
+                        elapsed: elapsed2,
+                        hasToolCalls: true,
+                        toolCallInfo: tcInfo,
+                        content: textContent,
+                        rawSnippet: truncate(JSON.stringify(data), 400),
+                    };
+                } else {
+                    // 没有 tool_calls，但请求成功
+                    return {
+                        success: true,
+                        elapsed: elapsed2,
+                        hasToolCalls: false,
+                        toolCallInfo: null,
+                        content: textContent,
+                        note: '模型未返回 tool_calls（可能不支持工具调用，或选择用文本回复）',
+                        rawSnippet: truncate(JSON.stringify(data), 300),
+                    };
+                }
+            } catch (err) {
+                clearTimeout(timeoutId);
+                const elapsed = Math.round(performance.now() - startTime);
+                if (err.name === 'AbortError') {
+                    return {
+                        success: false,
+                        elapsed,
+                        error: `请求超时 (${timeoutSec}s)`,
+                        hasToolCalls: false,
+                        toolCallInfo: null,
+                        content: null,
+                    };
+                }
+                return {
+                    success: false,
+                    elapsed,
+                    error: err.message,
+                    hasToolCalls: false,
+                    toolCallInfo: null,
+                    content: null,
+                };
+            }
+        }
+
+        // ============ 测试执行 ============
+        async function runTestsForModel(baseUrl, apiKey, model, timeoutSec) {
+            const results = {
+                nonStream: null,
+                stream: null,
+                toolCall: null,
+            };
+
+            // 非流式测试
+            results.nonStream = await callNonStream(baseUrl, apiKey, model, timeoutSec);
+            state.completedTests++;
+            updateProgress();
+            updateModelResultRow(model, results);
+
+            // 检查是否被停止
+            if (!state.isRunning) return results;
+
+            // 流式测试
+            results.stream = await callStream(baseUrl, apiKey, model, timeoutSec);
+            state.completedTests++;
+            updateProgress();
+            updateModelResultRow(model, results);
+
+            // 检查是否被停止
+            if (!state.isRunning) return results;
+
+            // 工具调用测试
+            results.toolCall = await callToolCall(baseUrl, apiKey, model, timeoutSec);
+            state.completedTests++;
+            updateProgress();
+            updateModelResultRow(model, results);
+
+            return results;
+        }
+
+        function updateModelResultRow(model, results) {
+            state.results[model] = results;
+            renderSingleModelRow(model, results);
+            updateSummary();
+        }
+
+        async function startAllTests() {
+            if (state.isRunning) return;
+
+            const rawUrl = apiUrlInput.value.trim();
+            const apiKey = apiKeyInput.value.trim();
+            const timeoutSec = parseInt($('#timeoutSeconds').value) || 45;
+            const concurrency = parseInt($('#concurrency').value) || 2;
+
+            if (!rawUrl) { showToast('请输入 API Base URL', 'error'); return; }
+            if (!apiKey) { showToast('请输入 API Key', 'error'); return; }
+
+            const selectedModels = getSelectedModels();
+            if (selectedModels.length === 0) {
+                showToast('请至少选择一个模型', 'error');
+                return;
+            }
+
+            const baseUrl = normalizeBaseUrl(rawUrl);
+
+            // 初始化
+            state.isRunning = true;
+            state.abortControllers = [];
+            state.results = {};
+            state.totalTests = selectedModels.length * 3; // 每个模型3项测试
+            state.completedTests = 0;
+            updateProgress();
+
+            // 显示UI
+            resultsCard.style.display = '';
+            summaryCard.style.display = '';
+            btnStartTest.disabled = true;
+            btnStopTest.disabled = false;
+            btnFetchModels.disabled = true;
+            btnStartTest.innerHTML = '<span class="spinner spinner-sm"></span> 测试中…';
+
+            // 初始化所有行
+            resultsTableBody.innerHTML = selectedModels
+                .map(
+                    m => `
+                <tr id="row-${CSS.escape(m)}" data-model="${escapeHtml(m)}">
+                    <td class="model-name">${escapeHtml(m)}</td>
+                    <td><span class="status-badge status-pending">等待</span></td>
+                    <td class="time-cell">—</td>
+                    <td><span class="status-badge status-pending">等待</span></td>
+                    <td class="time-cell">—</td>
+                    <td class="time-cell">—</td>
+                    <td><span class="status-badge status-pending">等待</span></td>
+                    <td class="time-cell">—</td>
+                    <td class="detail-cell">—</td>
+                </tr>`
+                )
+                .join('');
+
+            updateSummary();
+
+            // 并发控制：使用队列
+            const queue = [...selectedModels];
+            const runningPromises = new Set();
+
+            async function processQueue() {
+                while (queue.length > 0 && state.isRunning) {
+                    const model = queue.shift();
+                    const promise = runTestsForModel(baseUrl, apiKey, model, timeoutSec).finally(() => {
+                        runningPromises.delete(promise);
+                    });
+                    runningPromises.add(promise);
+
+                    // 控制并发数
+                    if (runningPromises.size >= concurrency) {
+                        await Promise.race(runningPromises);
+                    }
+                }
+                // 等待剩余任务完成
+                await Promise.all(runningPromises);
+            }
+
+            try {
+                await processQueue();
+            } catch (err) {
+                console.error('测试过程出错:', err);
+            } finally {
+                // 完成
+                state.isRunning = false;
+                btnStartTest.disabled = false;
+                btnStopTest.disabled = true;
+                btnFetchModels.disabled = false;
+                btnStartTest.textContent = '🚀 开始测试';
+                updateProgress();
+                updateSummary();
+
+                const totalDone = state.completedTests;
+                const passCount = countPasses();
+                showToast(`测试完成！${totalDone} 项测试，${passCount} 项通过`, passCount === totalDone ? 'success' :
+                    'info');
+            }
+        }
+
+        function stopAllTests() {
+            state.isRunning = false;
+            // 中止所有进行中的请求
+            for (const ctrl of state.abortControllers) {
+                try { ctrl.abort(); } catch (e) {}
+            }
+            state.abortControllers = [];
+            btnStartTest.disabled = false;
+            btnStopTest.disabled = true;
+            btnFetchModels.disabled = false;
+            btnStartTest.textContent = '🚀 开始测试';
+            updateProgress();
+            showToast('已停止测试', 'info');
+        }
+
+        function countPasses() {
+            let count = 0;
+            for (const modelResults of Object.values(state.results)) {
+                if (modelResults.nonStream?.success) count++;
+                if (modelResults.stream?.success) count++;
+                if (modelResults.toolCall?.success) count++;
+            }
+            return count;
+        }
+
+        function updateSummary() {
+            let total = 0,
+                pass = 0,
+                fail = 0;
+            const modelsWithResults = new Set();
+            for (const [model, results] of Object.entries(state.results)) {
+                modelsWithResults.add(model);
+                if (results.nonStream) { total++;
+                    results.nonStream.success ? pass++ : fail++; }
+                if (results.stream) { total++;
+                    results.stream.success ? pass++ : fail++; }
+                if (results.toolCall) { total++;
+                    results.toolCall.success ? pass++ : fail++; }
+            }
+            $('#sumTotal').textContent = total;
+            $('#sumPass').textContent = pass;
+            $('#sumFail').textContent = fail;
+            $('#sumModels').textContent = modelsWithResults.size;
+            summaryCard.style.display = total > 0 ? '' : 'none';
+        }
+
+        function renderSingleModelRow(model, results) {
+            const row = document.getElementById(`row-${CSS.escape(model)}`);
+            if (!row) return;
+
+            const cells = row.querySelectorAll('td');
+            // cells[0] = model name
+            // cells[1] = nonStream status
+            // cells[2] = nonStream time
+            // cells[3] = stream status
+            // cells[4] = stream first byte
+            // cells[5] = stream total time
+            // cells[6] = toolCall status
+            // cells[7] = toolCall time
+            // cells[8] = detail
+
+            // 非流式
+            if (results.nonStream) {
+                const r = results.nonStream;
+                cells[1].innerHTML = r.success ?
+                    '<span class="status-badge status-pass">✅ 通过</span>' :
+                    '<span class="status-badge status-fail">❌ 失败</span>';
+                cells[2].textContent = formatTime(r.elapsed);
+            }
+
+            // 流式
+            if (results.stream) {
+                const r = results.stream;
+                cells[3].innerHTML = r.success ?
+                    '<span class="status-badge status-pass">✅ 通过</span>' :
+                    '<span class="status-badge status-fail">❌ 失败</span>';
+                cells[4].textContent = formatTime(r.firstByteTime);
+                cells[5].textContent = formatTime(r.elapsed);
+            }
+
+            // 工具调用
+            if (results.toolCall) {
+                const r = results.toolCall;
+                if (r.success && r.hasToolCalls) {
+                    cells[6].innerHTML = '<span class="status-badge status-pass">✅ 通过 (含ToolCall)</span>';
+                } else if (r.success && !r.hasToolCalls) {
+                    cells[6].innerHTML =
+                        '<span class="status-badge status-warn">⚠ 无ToolCall</span>';
+                } else {
+                    cells[6].innerHTML = '<span class="status-badge status-fail">❌ 失败</span>';
+                }
+                cells[7].textContent = formatTime(r.elapsed);
+            }
+
+            // 详情汇总
+            const detailParts = [];
+            if (results.nonStream?.error) detailParts.push('非流式: ' + results.nonStream.error);
+            if (results.stream?.error) detailParts.push('流式: ' + results.stream.error);
+            if (results.toolCall?.error) detailParts.push('工具: ' + results.toolCall.error);
+            if (results.toolCall?.note) detailParts.push('工具: ' + results.toolCall.note);
+            if (results.nonStream?.content && !results.nonStream?.error) {
+                detailParts.push('非流式回复: ' + truncate(results.nonStream.content, 40));
+            }
+            if (results.toolCall?.hasToolCalls && results.toolCall?.toolCallInfo) {
+                const tcNames = results.toolCall.toolCallInfo.map(t => t.name).join(', ');
+                detailParts.push('ToolCall: ' + tcNames);
+            }
+            cells[8].textContent = detailParts.length > 0 ? truncate(detailParts.join(' | '), 100) : '—';
+            cells[8].title = detailParts.join('\n');
+        }
+
+        function renderResults() {
+            if (Object.keys(state.results).length === 0) {
+                resultsTableBody.innerHTML =
+                    '<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text-muted);">暂无测试结果</td></tr>';
+                resultsCard.style.display = 'none';
+                summaryCard.style.display = 'none';
+                return;
+            }
+            resultsCard.style.display = '';
+            const allModels = Object.keys(state.results);
+            resultsTableBody.innerHTML = allModels
+                .map(m => {
+                    const r = state.results[m];
+                    return `
+                <tr id="row-${CSS.escape(m)}" data-model="${escapeHtml(m)}">
+                    <td class="model-name">${escapeHtml(m)}</td>
+                    <td>${r.nonStream ? (r.nonStream.success ? '<span class="status-badge status-pass">✅ 通过</span>' : '<span class="status-badge status-fail">❌ 失败</span>') : '<span class="status-badge status-pending">—</span>'}</td>
+                    <td class="time-cell">${formatTime(r.nonStream?.elapsed)}</td>
+                    <td>${r.stream ? (r.stream.success ? '<span class="status-badge status-pass">✅ 通过</span>' : '<span class="status-badge status-fail">❌ 失败</span>') : '<span class="status-badge status-pending">—</span>'}</td>
+                    <td class="time-cell">${formatTime(r.stream?.firstByteTime)}</td>
+                    <td class="time-cell">${formatTime(r.stream?.elapsed)}</td>
+                    <td>${r.toolCall ? (r.toolCall.success && r.toolCall.hasToolCalls ? '<span class="status-badge status-pass">✅ 通过</span>' : r.toolCall.success ? '<span class="status-badge status-warn">⚠ 无TC</span>' : '<span class="status-badge status-fail">❌ 失败</span>') : '<span class="status-badge status-pending">—</span>'}</td>
+                    <td class="time-cell">${formatTime(r.toolCall?.elapsed)}</td>
+                    <td class="detail-cell" title="点击查看详情" onclick="showDetail('${escapeHtml(m).replace(/'/g, "\\'")}')">🔍 查看</td>
+                </tr>`;
+                })
+                .join('');
+            updateSummary();
+        }
+
+        function showDetail(model) {
+            const results = state.results[model];
+            if (!results) return;
+
+            const detailData = {
+                model: model,
+                nonStream: results.nonStream,
+                stream: results.stream ? {
+                    success: results.stream.success,
+                    elapsed: results.stream.elapsed,
+                    firstByteTime: results.stream.firstByteTime,
+                    chunksReceived: results.stream.chunksReceived,
+                    receivedDone: results.stream.receivedDone,
+                    content: results.stream.content,
+                    error: results.stream.error,
+                } : null,
+                toolCall: results.toolCall ? {
+                    success: results.toolCall.success,
+                    elapsed: results.toolCall.elapsed,
+                    hasToolCalls: results.toolCall.hasToolCalls,
+                    toolCallInfo: results.toolCall.toolCallInfo,
+                    content: results.toolCall.content,
+                    error: results.toolCall.error,
+                    note: results.toolCall.note,
+                    rawSnippet: results.toolCall.rawSnippet,
+                } : null,
+            };
+
+            const detailStr = JSON.stringify(detailData, null, 2);
+
+            // 检查是否已有弹窗
+            const existingModal = document.querySelector('.detail-modal-overlay');
+            if (existingModal) existingModal.remove();
+
+            const overlay = document.createElement('div');
+            overlay.className = 'detail-modal-overlay';
+            overlay.style.cssText = `
+                position:fixed;top:0;left:0;width:100%;height:100%;
+                background:rgba(0,0,0,0.5);z-index:9998;
+                display:flex;align-items:center;justify-content:center;
+            `;
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) overlay.remove();
+            });
+
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                background:#fff;border-radius:12px;padding:24px;max-width:700px;
+                width:90%;max-height:80vh;overflow-y:auto;
+                box-shadow:0 20px 60px rgba(0,0,0,0.2);
+                position:relative;z-index:9999;
+            `;
+            modal.innerHTML = `
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                    <h3 style="margin:0;font-size:1rem;">📋 详情：${escapeHtml(model)}</h3>
+                    <button style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#8b9198;padding:0;line-height:1;"
+                        onclick="this.closest('.detail-modal-overlay').remove()">&times;</button>
+                </div>
+                <pre style="background:#f8f9fa;border-radius:8px;padding:16px;font-size:0.75rem;
+                font-family:'SF Mono','Consolas','Monaco',monospace;
+                white-space:pre-wrap;word-break:break-all;max-height:55vh;overflow-y:auto;
+                color:#1a1d23;line-height:1.5;">${escapeHtml(detailStr)}</pre>
+                <button class="btn btn-outline btn-sm" style="margin-top:12px;"
+                    onclick="navigator.clipboard.writeText(${JSON.stringify(detailStr)}).then(()=>{this.textContent='✅ 已复制';setTimeout(()=>{this.textContent='📋 复制JSON'},1500)}).catch(()=>{this.textContent='复制失败'})">
+                    📋 复制JSON
+                </button>
+            `;
+
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+
+            // ESC 关闭
+            const escHandler = (e) => {
+                if (e.key === 'Escape') {
+                    overlay.remove();
+                    document.removeEventListener('keydown', escHandler);
+                }
+            };
+            document.addEventListener('keydown', escHandler);
+        }
+
+        function clearResults() {
+            state.results = {};
+            state.totalTests = 0;
+            state.completedTests = 0;
+            updateProgress();
+            resultsTableBody.innerHTML =
+                '<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text-muted);">暂无测试结果</td></tr>';
+            resultsCard.style.display = 'none';
+            summaryCard.style.display = 'none';
+            progressBar.style.width = '0%';
+            progressLabel.textContent = '就绪';
+            showToast('结果已清除', 'info');
+        }
+
+        function exportResults() {
+            if (Object.keys(state.results).length === 0) {
+                showToast('没有可导出的结果', 'error');
+                return;
+            }
+            const exportData = {
+                exportTime: new Date().toISOString(),
+                baseUrl: normalizeBaseUrl(apiUrlInput.value.trim()),
+                results: state.results,
+            };
+            const jsonStr = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `api-test-results-${Date.now()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('结果已导出', 'success');
+        }
+
+        // ============ 键盘快捷键 ============
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                if (state.isRunning) {
+                    stopAllTests();
+                } else {
+                    startAllTests();
+                }
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'm') {
+                e.preventDefault();
+                fetchModels();
+            }
+        });
+
+        // ============ 初始化提示 ============
+        console.log('🚀 API 全能力测试工具已就绪');
+        console.log('  快捷键: Ctrl+Enter = 开始/停止测试 | Ctrl+M = 获取模型列表');
+        console.log('  支持 OpenAI 兼容接口 (OneAPI, FastGPT, vLLM, Ollama 等)');
+        console.log('  测试项目: 非流式调用 | 流式调用 | 工具调用(Function Calling)');
+    </script>
 </body>
-  </html>
+</html>
